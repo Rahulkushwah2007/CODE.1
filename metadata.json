@@ -1,0 +1,6 @@
+{
+  "name": "RESQTECH",
+  "description": "Real-time disaster shelter coordination platform for India and Nepal with GIS mapping, smart family intake, capacity monitoring, and resource logistics.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
