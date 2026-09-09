@@ -28,45 +28,45 @@ interface NavItem {
 }
 
 export const Sidebar: React.FC = () => {
-  const { currentTab, setCurrentTab, alerts, shelters, country, theme } = useApp();
+  const { currentTab, setCurrentTab, alerts, shelters, country, theme, t } = useApp();
 
   const criticalAlertsCount = alerts.filter(a => a.status === 'active' && a.severity === 'CRITICAL').length;
   const criticalSheltersCount = shelters.filter(s => (country === 'ALL' || s.country === country) && s.status === 'CRITICAL').length;
 
-  // Main high-priority relief options (without the flashing alert button distracting the user)
+  // Main high-priority relief options (localized via t())
   const primaryOptions: NavItem[] = [
     {
       tab: 'shelters',
-      label: 'Shelters & Safe Zones',
+      label: t('tabShelters'),
       icon: Building2,
       badge: criticalSheltersCount > 0 ? `${criticalSheltersCount} Alert` : undefined,
       badgeColor: 'bg-[#EA580C] text-[#FFFFFF]'
     },
     {
       tab: 'register-shelter',
-      label: 'Register New Shelter',
+      label: t('tabRegisterShelter'),
       icon: PlusCircle,
       badge: 'Public/Private',
       badgeColor: 'bg-emerald-600 text-white'
     },
     {
       tab: 'resources',
-      label: 'Relief Resources',
+      label: t('tabResources'),
       icon: PackageCheck
     },
     {
       tab: 'profile',
-      label: 'Evacuee Profile & Pass',
+      label: t('tabProfile'),
       icon: UserCheck
     }
   ];
 
   const coordinatorTools: NavItem[] = [
-    { tab: 'command', label: 'Command Center', icon: LayoutDashboard },
-    { tab: 'intake', label: 'Family Intake Wizard', icon: UserPlus },
-    { tab: 'volunteers', label: 'Volunteer Network', icon: HeartHandshake },
-    { tab: 'analytics', label: 'Disaster Analytics', icon: BarChart3 },
-    { tab: 'settings', label: 'System Telemetry', icon: Sliders }
+    { tab: 'command', label: t('tabCommand'), icon: LayoutDashboard },
+    { tab: 'intake', label: t('tabIntake'), icon: UserPlus },
+    { tab: 'volunteers', label: t('tabVolunteers'), icon: HeartHandshake },
+    { tab: 'analytics', label: t('tabAnalytics'), icon: BarChart3 },
+    { tab: 'settings', label: t('tabSettings'), icon: Sliders }
   ];
 
   const handleNav = (tab: NavigationTab) => {
@@ -84,7 +84,7 @@ export const Sidebar: React.FC = () => {
         {/* Primary User Sections */}
         <div className="space-y-1.5">
           <div className="px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8] font-bold">
-            Core Relief Operations
+            {t('coreReliefOps')}
           </div>
 
           {primaryOptions.map(item => {
@@ -143,15 +143,15 @@ export const Sidebar: React.FC = () => {
                 </div>
                 <div>
                   <div className="font-extrabold text-xs text-[#0F172A] dark:text-white leading-tight">
-                    Add New Shelter
+                    {t('addNewShelter')}
                   </div>
                   <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
-                    Private or Public facility
+                    {t('privateOrPublic')}
                   </div>
                 </div>
               </div>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full font-black uppercase bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300">
-                Register
+                {t('registerBadge')}
               </span>
             </div>
           </button>
@@ -160,7 +160,7 @@ export const Sidebar: React.FC = () => {
         {/* Secondary Coordinator Sections */}
         <div className="space-y-1.5 pt-2 border-t border-[#E2E8F0] dark:border-[#1E293B]">
           <div className="px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-[#94A3B8] dark:text-[#64748B] font-bold">
-            EOC &amp; Incident Coordination
+            {t('eocIncidentCoord')}
           </div>
 
           {coordinatorTools.map(item => {
@@ -204,7 +204,7 @@ export const Sidebar: React.FC = () => {
         >
           <div className="flex items-center gap-2.5">
             <AlertOctagon className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-            <span className="text-[11px] font-semibold">Emergency Alert System</span>
+            <span className="text-[11px] font-semibold">{t('tabAlerts')}</span>
           </div>
           {criticalAlertsCount > 0 && (
             <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">

@@ -212,3 +212,6 @@ export interface ShelterScoreResult {
   warningFlags: string[];
   capacityFit: boolean;
 }
+
+export type AppLanguage = 'en' | 'hi' | 'gu';
+

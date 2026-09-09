@@ -33,7 +33,8 @@ export const ShelterManagerDashboard: React.FC = () => {
     updateShelterOccupancy,
     setShelterOccupancy,
     updateShelterResource,
-    createResourceRequest
+    createResourceRequest,
+    t
   } = useApp();
 
   const countryShelters = shelters.filter(s => s.country === country);
@@ -116,27 +117,27 @@ export const ShelterManagerDashboard: React.FC = () => {
     <div id="shelter-manager-dashboard" className="max-w-6xl mx-auto p-4 sm:p-6 space-y-8 text-[#F8FAFC]">
       
       {/* Top Shelter Switcher & Header */}
-      <div className="bg-[#111C30] border border-[#243656] rounded-3xl p-5 sm:p-7 shadow-2xl space-y-4">
+      <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-5 sm:p-7 shadow-2xl space-y-4">
         
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#243656]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#334155]">
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
-                SHELTER MANAGER WORKSTATION
+                {t('shelterManager')}
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white mt-1">
               {activeShelter.name}
             </h1>
             <p className="text-xs text-[#94A3B8] mt-0.5">
-              Facility ID: <span className="font-mono text-blue-300">{activeShelter.id}</span> &bull; {activeShelter.address}, {activeShelter.city}
+              Facility ID: <span className="font-mono text-emerald-400">{activeShelter.id}</span> &bull; {activeShelter.address}, {activeShelter.city}
             </p>
           </div>
 
           {/* Shelter Selector dropdown */}
           <div className="flex items-center gap-2">
-            <label className="text-xs text-[#94A3B8] font-mono hidden sm:inline">Switch Shelter:</label>
+            <label className="text-xs text-[#94A3B8] font-mono hidden sm:inline">{t('shelterManager')}:</label>
             <select
               value={activeShelter.id}
               onChange={e => {
@@ -144,7 +145,7 @@ export const ShelterManagerDashboard: React.FC = () => {
                 const s = shelters.find(item => item.id === e.target.value);
                 if (s) setManualOccupancy(s.currentOccupancy);
               }}
-              className="bg-[#0A1120] border border-[#243656] rounded-xl px-3 py-2 text-xs sm:text-sm text-[#F8FAFC] focus:outline-none focus:border-blue-500 font-medium"
+              className="bg-[#0B1329] border border-[#334155] rounded-xl px-3 py-2 text-xs sm:text-sm text-[#F8FAFC] focus:outline-none focus:border-emerald-500 font-medium"
             >
               {countryShelters.map(s => (
                 <option key={s.id} value={s.id}>
@@ -158,7 +159,7 @@ export const ShelterManagerDashboard: React.FC = () => {
         {/* Manager Banner Info */}
         <div className="flex flex-wrap items-center justify-between text-xs gap-3">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-blue-400" />
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
             <span className="text-[#CBD5E1] font-semibold">Camp Warden: {activeShelter.managerName}</span>
             <span className="text-[#94A3B8]">({activeShelter.managerRole})</span>
           </div>
@@ -182,8 +183,8 @@ export const ShelterManagerDashboard: React.FC = () => {
       {/* Top Metric Cards (Capacity, Occupancy, Available, %) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         
-        <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-4 shadow-lg">
-          <span className="text-xs font-mono uppercase text-[#94A3B8] block">TOTAL CAPACITY</span>
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-4 shadow-lg">
+          <span className="text-xs font-mono uppercase text-[#94A3B8] block">{t('totalCapacity')}</span>
           <div className="mt-1 flex items-baseline justify-between">
             <span className="text-3xl font-black font-mono text-white">{activeShelter.totalCapacity}</span>
             <Building2 className="w-5 h-5 text-[#94A3B8]" />
@@ -191,17 +192,17 @@ export const ShelterManagerDashboard: React.FC = () => {
           <span className="text-[11px] text-[#94A3B8] font-mono mt-0.5 block">Approved max beds</span>
         </div>
 
-        <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-4 shadow-lg">
-          <span className="text-xs font-mono uppercase text-[#94A3B8] block">CURRENT OCCUPANCY</span>
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-4 shadow-lg">
+          <span className="text-xs font-mono uppercase text-[#94A3B8] block">{t('occupancy')}</span>
           <div className="mt-1 flex items-baseline justify-between">
             <span className="text-3xl font-black font-mono text-white">{activeShelter.currentOccupancy}</span>
-            <Users className="w-5 h-5 text-blue-400" />
+            <Users className="w-5 h-5 text-[#F97316]" />
           </div>
           <span className="text-[11px] text-[#94A3B8] font-mono mt-0.5 block">Verified registered</span>
         </div>
 
-        <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-4 shadow-lg">
-          <span className="text-xs font-mono uppercase text-[#94A3B8] block">AVAILABLE BEDS</span>
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-4 shadow-lg">
+          <span className="text-xs font-mono uppercase text-[#94A3B8] block">{t('vacantBeds')}</span>
           <div className="mt-1 flex items-baseline justify-between">
             <span className="text-3xl font-black font-mono text-emerald-400">{activeShelter.availableBeds}</span>
             <Bed className="w-5 h-5 text-emerald-400" />
@@ -209,8 +210,8 @@ export const ShelterManagerDashboard: React.FC = () => {
           <span className="text-[11px] text-emerald-500/80 font-mono mt-0.5 block">Immediate intake buffer</span>
         </div>
 
-        <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-4 shadow-lg">
-          <span className="text-xs font-mono uppercase text-[#94A3B8] block">OCCUPANCY %</span>
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-4 shadow-lg">
+          <span className="text-xs font-mono uppercase text-[#94A3B8] block">{t('capacityStatus')} %</span>
           <div className="mt-1 flex items-baseline justify-between">
             <span className={`text-3xl font-black font-mono ${
               occupancyPct >= 90 ? 'text-rose-400' : occupancyPct >= 70 ? 'text-amber-400' : 'text-emerald-400'
@@ -228,12 +229,12 @@ export const ShelterManagerDashboard: React.FC = () => {
       </div>
 
       {/* Large Visual Occupancy Indicator & Live Controls */}
-      <div className="bg-[#111C30] border border-[#243656] rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+      <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <span className="text-xs font-mono uppercase tracking-wider text-[#94A3B8] font-bold">
-              LIVE CAPACITY OCCUPANCY MONITOR
+              {t('capacityStatus')}
             </span>
             <div className="flex items-baseline gap-3 mt-1">
               <span className="text-3xl sm:text-5xl font-black font-mono text-white">
@@ -260,25 +261,25 @@ export const ShelterManagerDashboard: React.FC = () => {
               id="btn-remove-person"
               onClick={() => updateShelterOccupancy(activeShelter.id, -1)}
               disabled={activeShelter.currentOccupancy <= 0}
-              className="px-4 py-2.5 rounded-xl bg-[#182742] hover:bg-[#243656] text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+              className="px-4 py-2.5 rounded-xl bg-[#0B1329] hover:bg-[#334155] text-[#CBD5E1] border border-[#334155] font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
             >
               <Minus className="w-4 h-4" />
-              <span>REMOVE PERSON</span>
+              <span>{t('remove')}</span>
             </button>
 
             <button
               id="btn-add-person"
               onClick={() => updateShelterOccupancy(activeShelter.id, 1)}
               disabled={activeShelter.currentOccupancy >= activeShelter.totalCapacity}
-              className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-600 text-white font-black text-xs sm:text-sm flex items-center gap-1.5 transition-colors cursor-pointer shadow-lg shadow-blue-600/20 disabled:opacity-50"
+              className="px-4 py-2.5 rounded-xl bg-[#F97316] hover:bg-[#EA580C] text-white font-black text-xs sm:text-sm flex items-center gap-1.5 transition-colors cursor-pointer shadow-lg shadow-orange-600/20 disabled:opacity-50"
             >
               <Plus className="w-4 h-4" />
-              <span>ADD PERSON</span>
+              <span>{t('add')}</span>
             </button>
 
             <button
               onClick={() => setShowManualInput(!showManualInput)}
-              className="p-2.5 rounded-xl bg-[#182742] hover:bg-[#243656] text-[#CBD5E1] transition-colors"
+              className="p-2.5 rounded-xl bg-[#0B1329] hover:bg-[#334155] text-[#CBD5E1] border border-[#334155] transition-colors cursor-pointer"
               title="Manual Set Occupancy"
             >
               <Edit2 className="w-4 h-4" />
@@ -288,14 +289,14 @@ export const ShelterManagerDashboard: React.FC = () => {
 
         {/* Live-looking occupancy progress bar */}
         <div className="space-y-1.5">
-          <div className="w-full h-5 bg-[#0A1120] rounded-full p-1 border border-[#243656] overflow-hidden shadow-inner">
+          <div className="w-full h-5 bg-[#0B1329] rounded-full p-1 border border-[#334155] overflow-hidden shadow-inner">
             <div
               className={`h-full rounded-full transition-all duration-300 ${
                 occupancyPct >= 90
                   ? 'bg-gradient-to-r from-amber-500 via-rose-500 to-red-600'
                   : occupancyPct >= 70
                   ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-500'
-                  : 'bg-gradient-to-r from-teal-500 to-emerald-400'
+                  : 'bg-gradient-to-r from-emerald-600 to-emerald-400'
               }`}
               style={{ width: `${Math.min(100, occupancyPct)}%` }}
             />
@@ -310,14 +311,14 @@ export const ShelterManagerDashboard: React.FC = () => {
 
         {/* Manual Direct Occupancy Edit Box */}
         {showManualInput && (
-          <div className="bg-[#0A1120] p-4 rounded-2xl border border-blue-500/40 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="bg-[#0B1329] p-4 rounded-2xl border border-emerald-500/40 flex flex-wrap items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-3">
               <span className="font-mono text-[#CBD5E1] font-semibold">Set Exact Intake Count:</span>
               <input
                 type="number"
                 value={manualOccupancy}
                 onChange={e => setManualOccupancy(Math.max(0, Math.min(activeShelter.totalCapacity, parseInt(e.target.value) || 0)))}
-                className="w-24 bg-[#111C30] border border-[#243656] rounded-lg px-2.5 py-1.5 text-white font-mono text-center font-bold"
+                className="w-24 bg-[#1E293B] border border-[#334155] rounded-lg px-2.5 py-1.5 text-white font-mono text-center font-bold"
               />
               <span className="text-[#94A3B8]">/ {activeShelter.totalCapacity} Total</span>
             </div>
@@ -328,15 +329,15 @@ export const ShelterManagerDashboard: React.FC = () => {
                   setShelterOccupancy(activeShelter.id, manualOccupancy);
                   setShowManualInput(false);
                 }}
-                className="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs"
+                className="px-4 py-1.5 rounded-lg bg-[#10B981] hover:bg-[#059669] text-white font-bold text-xs cursor-pointer"
               >
-                UPDATE OCCUPANCY
+                {t('confirm')}
               </button>
               <button
                 onClick={() => setShowManualInput(false)}
-                className="px-3 py-1.5 rounded-lg bg-[#182742] text-[#94A3B8] hover:text-white text-xs"
+                className="px-3 py-1.5 rounded-lg bg-[#1E293B] border border-[#334155] text-[#94A3B8] hover:text-white text-xs cursor-pointer"
               >
-                Cancel
+                {t('cancel')}
               </button>
             </div>
           </div>
@@ -357,11 +358,11 @@ export const ShelterManagerDashboard: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           
           {/* Beds */}
-          <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-4 flex flex-col justify-between space-y-3">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-4 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Bed className="w-4 h-4 text-blue-400" />
+                  <Bed className="w-4 h-4 text-emerald-400" />
                   <span>Beds / Cots</span>
                 </span>
                 {(() => {
@@ -375,29 +376,29 @@ export const ShelterManagerDashboard: React.FC = () => {
                 <div>Required: <strong className="text-[#94A3B8]">{activeShelter.resources.beds.required}</strong> {activeShelter.resources.beds.unit}</div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#243656] text-xs">
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#334155] text-xs">
               <button
                 onClick={() => handleOpenEditResource('beds')}
-                className="py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-[#CBD5E1] text-center font-semibold"
+                className="py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#CBD5E1] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Update
+                {t('updateInventory')}
               </button>
               <button
                 onClick={() => handleOpenSupplyRequest('Folding Beds', 50)}
-                className="py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-blue-400 border border-[#243656] text-center font-semibold"
+                className="py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#F97316] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Request Supply
+                {t('requestSupplies')}
               </button>
             </div>
           </div>
 
           {/* Clean Water */}
-          <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-4 flex flex-col justify-between space-y-3">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-4 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Droplet className="w-4 h-4 text-blue-400" />
-                  <span>Clean Potable Water</span>
+                  <Droplet className="w-4 h-4 text-emerald-400" />
+                  <span>{t('drinkingWater')}</span>
                 </span>
                 {(() => {
                   const r = activeShelter.resources.drinkingWater;
@@ -410,29 +411,29 @@ export const ShelterManagerDashboard: React.FC = () => {
                 <div>Required: <strong className="text-[#94A3B8]">{activeShelter.resources.drinkingWater.required}</strong> {activeShelter.resources.drinkingWater.unit}</div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#243656] text-xs">
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#334155] text-xs">
               <button
                 onClick={() => handleOpenEditResource('drinkingWater')}
-                className="py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-[#CBD5E1] text-center font-semibold"
+                className="py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#CBD5E1] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Update
+                {t('updateInventory')}
               </button>
               <button
                 onClick={() => handleOpenSupplyRequest('Potable Water Tanker', 3000)}
-                className="py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-blue-400 border border-[#243656] text-center font-semibold"
+                className="py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#F97316] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Request Supply
+                {t('requestSupplies')}
               </button>
             </div>
           </div>
 
           {/* Food / Rations */}
-          <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-4 flex flex-col justify-between space-y-3">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-4 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
                   <Utensils className="w-4 h-4 text-amber-400" />
-                  <span>Food / Ration Kits</span>
+                  <span>{t('hotFood')}</span>
                 </span>
                 {(() => {
                   const r = activeShelter.resources.foodRations;
@@ -445,29 +446,29 @@ export const ShelterManagerDashboard: React.FC = () => {
                 <div>Required: <strong className="text-[#94A3B8]">{activeShelter.resources.foodRations.required}</strong> {activeShelter.resources.foodRations.unit}</div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#243656] text-xs">
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#334155] text-xs">
               <button
                 onClick={() => handleOpenEditResource('foodRations')}
-                className="py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-[#CBD5E1] text-center font-semibold"
+                className="py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#CBD5E1] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Update
+                {t('updateInventory')}
               </button>
               <button
                 onClick={() => handleOpenSupplyRequest('Ration Kits', 200)}
-                className="py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-blue-400 border border-[#243656] text-center font-semibold"
+                className="py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#F97316] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Request Supply
+                {t('requestSupplies')}
               </button>
             </div>
           </div>
 
           {/* Medical Kits */}
-          <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-4 flex flex-col justify-between space-y-3">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-4 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
                   <HeartPulse className="w-4 h-4 text-rose-400" />
-                  <span>Medical / Trauma Kits</span>
+                  <span>{t('medicalSupport')}</span>
                 </span>
                 {(() => {
                   const r = activeShelter.resources.medicalKits;
@@ -480,24 +481,24 @@ export const ShelterManagerDashboard: React.FC = () => {
                 <div>Required: <strong className="text-[#94A3B8]">{activeShelter.resources.medicalKits.required}</strong> {activeShelter.resources.medicalKits.unit}</div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#243656] text-xs">
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#334155] text-xs">
               <button
                 onClick={() => handleOpenEditResource('medicalKits')}
-                className="py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-[#CBD5E1] text-center font-semibold"
+                className="py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#CBD5E1] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Update
+                {t('updateInventory')}
               </button>
               <button
                 onClick={() => handleOpenSupplyRequest('Trauma & First Aid Kits', 25)}
-                className="py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-blue-400 border border-[#243656] text-center font-semibold"
+                className="py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#F97316] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Request Supply
+                {t('requestSupplies')}
               </button>
             </div>
           </div>
 
           {/* Blankets */}
-          <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-4 flex flex-col justify-between space-y-3">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-4 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
@@ -515,24 +516,24 @@ export const ShelterManagerDashboard: React.FC = () => {
                 <div>Required: <strong className="text-[#94A3B8]">{activeShelter.resources.blankets.required}</strong> {activeShelter.resources.blankets.unit}</div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#243656] text-xs">
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#334155] text-xs">
               <button
                 onClick={() => handleOpenEditResource('blankets')}
-                className="py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-[#CBD5E1] text-center font-semibold"
+                className="py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#CBD5E1] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Update
+                {t('updateInventory')}
               </button>
               <button
                 onClick={() => handleOpenSupplyRequest('Thermal Blankets', 150)}
-                className="py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-blue-400 border border-[#243656] text-center font-semibold"
+                className="py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#F97316] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Request Supply
+                {t('requestSupplies')}
               </button>
             </div>
           </div>
 
           {/* Toilets & Power Status */}
-          <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-4 flex flex-col justify-between space-y-3">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-4 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
@@ -548,12 +549,12 @@ export const ShelterManagerDashboard: React.FC = () => {
                 <div>Generator Power: <strong className="text-emerald-400">{activeShelter.facilities.powerBackup ? 'Active Diesel Gen' : 'Grid Only'}</strong></div>
               </div>
             </div>
-            <div className="pt-2 border-t border-[#243656] text-xs flex justify-end">
+            <div className="pt-2 border-t border-[#334155] text-xs flex justify-end">
               <button
                 onClick={() => handleOpenSupplyRequest('Mobile Bio-Toilets', 5)}
-                className="w-full py-1 px-2 rounded-lg bg-[#182742] hover:bg-[#243656] text-blue-400 border border-[#243656] text-center font-semibold"
+                className="w-full py-1 px-2 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#F97316] border border-[#334155] text-center font-semibold cursor-pointer"
               >
-                Request Sanitation Unit
+                {t('requestSupplies')}
               </button>
             </div>
           </div>
@@ -562,33 +563,33 @@ export const ShelterManagerDashboard: React.FC = () => {
       </div>
 
       {/* 14. Shelter Manager Information Card (Exact Prompt Specification) */}
-      <div className="bg-[#111C30] border border-[#243656] rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
+      <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 sm:p-8 shadow-2xl space-y-4">
         <h2 className="text-base sm:text-lg font-black text-white uppercase tracking-wider font-mono">
           WHO MANAGES THIS SHELTER?
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-          <div className="bg-[#0A1120] p-4 rounded-2xl border border-[#243656]">
+          <div className="bg-[#0B1329] p-4 rounded-2xl border border-[#334155]">
             <span className="text-[#94A3B8] block mb-1">Managing Organization</span>
             <strong className="text-white font-sans text-sm block">{activeShelter.managingOrg}</strong>
             <span className="text-[11px] text-[#94A3B8] mt-1 block">Government / Humanitarian Lead</span>
           </div>
 
-          <div className="bg-[#0A1120] p-4 rounded-2xl border border-[#243656]">
+          <div className="bg-[#0B1329] p-4 rounded-2xl border border-[#334155]">
             <span className="text-[#94A3B8] block mb-1">Shelter Manager</span>
             <strong className="text-white font-sans text-sm block">{activeShelter.managerName}</strong>
-            <span className="text-[11px] text-blue-400 mt-1 block">{activeShelter.managerRole}</span>
+            <span className="text-[11px] text-emerald-400 mt-1 block">{activeShelter.managerRole}</span>
           </div>
 
-          <div className="bg-[#0A1120] p-4 rounded-2xl border border-[#243656]">
-            <span className="text-[#94A3B8] block mb-1">Contact Hotline</span>
+          <div className="bg-[#0B1329] p-4 rounded-2xl border border-[#334155]">
+            <span className="text-[#94A3B8] block mb-1">{t('emergencyHelpline')}</span>
             <strong className="text-white font-mono text-sm block">{activeShelter.phone}</strong>
             <a href={`tel:${activeShelter.phone}`} className="text-[11px] text-emerald-400 hover:underline mt-1 block">
-              Call Direct &rarr;
+              {t('callNow')} &rarr;
             </a>
           </div>
 
-          <div className="bg-[#0A1120] p-4 rounded-2xl border border-[#243656]">
+          <div className="bg-[#0B1329] p-4 rounded-2xl border border-[#334155]">
             <span className="text-[#94A3B8] block mb-1">Emergency Coordinator</span>
             <strong className="text-white font-sans text-sm block">{activeShelter.emergencyCoordinator}</strong>
             <span className="text-[11px] text-[#94A3B8] mt-1 block">Apex Disaster Authority</span>
@@ -598,10 +599,10 @@ export const ShelterManagerDashboard: React.FC = () => {
 
       {/* EDIT RESOURCE MODAL */}
       {editingResourceKey && (
-        <div className="fixed inset-0 z-50 bg-[#0A1120]/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#111C30] border border-[#243656] rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 bg-[#0B1329]/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
             <h3 className="text-base font-bold text-white">
-              Update Inventory: {editingResourceKey}
+              {t('updateInventory')}: {editingResourceKey}
             </h3>
             <div>
               <label className="text-xs text-[#94A3B8] block mb-1">Current In-Stock Quantity</label>
@@ -609,21 +610,21 @@ export const ShelterManagerDashboard: React.FC = () => {
                 type="number"
                 value={editResourceValue}
                 onChange={e => setEditResourceValue(Math.max(0, parseInt(e.target.value) || 0))}
-                className="w-full bg-[#0A1120] border border-[#243656] rounded-xl px-3 py-2 text-sm text-white font-mono"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-3 py-2 text-sm text-white font-mono"
               />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 onClick={() => setEditingResourceKey(null)}
-                className="px-4 py-2 rounded-xl bg-[#182742] text-[#CBD5E1] text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-[#0B1329] border border-[#334155] text-[#CBD5E1] text-xs font-semibold cursor-pointer"
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={handleSaveResource}
-                className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-600 text-white font-bold text-xs"
+                className="px-5 py-2 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white font-bold text-xs cursor-pointer shadow-lg"
               >
-                Save Inventory
+                {t('save')}
               </button>
             </div>
           </div>
@@ -632,13 +633,13 @@ export const ShelterManagerDashboard: React.FC = () => {
 
       {/* SUPPLY REQUEST MODAL */}
       {requestingResourceKey && (
-        <div className="fixed inset-0 z-50 bg-[#0A1120]/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#111C30] border border-[#243656] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#243656] pb-3">
+        <div className="fixed inset-0 z-50 bg-[#0B1329]/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#334155] pb-3">
               <h3 className="text-base font-bold text-white">
-                Request Supply: {requestingResourceKey}
+                {t('requestSupplies')}: {requestingResourceKey}
               </h3>
-              <button onClick={() => setRequestingResourceKey(null)} className="text-[#94A3B8] text-lg font-bold">
+              <button onClick={() => setRequestingResourceKey(null)} className="text-[#94A3B8] hover:text-white text-lg font-bold cursor-pointer">
                 &times;
               </button>
             </div>
@@ -650,7 +651,7 @@ export const ShelterManagerDashboard: React.FC = () => {
                   type="text"
                   disabled
                   value={activeShelter.name}
-                  className="w-full bg-[#0A1120] border border-[#243656] rounded-xl px-3 py-2 text-[#CBD5E1]"
+                  className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-3 py-2 text-[#CBD5E1]"
                 />
               </div>
 
@@ -661,7 +662,7 @@ export const ShelterManagerDashboard: React.FC = () => {
                     type="number"
                     value={requestQty}
                     onChange={e => setRequestQty(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-full bg-[#0A1120] border border-[#243656] rounded-xl px-3 py-2 text-white font-mono font-bold"
+                    className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-3 py-2 text-white font-mono font-bold"
                   />
                 </div>
 
@@ -670,7 +671,7 @@ export const ShelterManagerDashboard: React.FC = () => {
                   <select
                     value={requestPriority}
                     onChange={e => setRequestPriority(e.target.value as ResourcePriority)}
-                    className="w-full bg-[#0A1120] border border-[#243656] rounded-xl px-3 py-2 text-white"
+                    className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-3 py-2 text-white"
                   >
                     <option value="CRITICAL">Critical (Urgent)</option>
                     <option value="HIGH">High</option>
@@ -686,23 +687,23 @@ export const ShelterManagerDashboard: React.FC = () => {
                   value={requestNotes}
                   onChange={e => setRequestNotes(e.target.value)}
                   placeholder="e.g. Surge in elderly patients, borewell water cloudy..."
-                  className="w-full bg-[#0A1120] border border-[#243656] rounded-xl p-2.5 text-[#F8FAFC] text-xs h-20"
+                  className="w-full bg-[#0B1329] border border-[#334155] rounded-xl p-2.5 text-[#F8FAFC] text-xs h-20"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-[#243656]">
+            <div className="flex justify-end gap-2 pt-2 border-t border-[#334155]">
               <button
                 onClick={() => setRequestingResourceKey(null)}
-                className="px-4 py-2 rounded-xl bg-[#182742] text-[#CBD5E1] text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-[#0B1329] border border-[#334155] text-[#CBD5E1] text-xs font-semibold cursor-pointer"
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={handleSubmitSupplyRequest}
-                className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs shadow-lg"
+                className="px-5 py-2 rounded-xl bg-[#F97316] hover:bg-[#EA580C] text-white font-black text-xs shadow-lg cursor-pointer"
               >
-                Submit Supply Requisition
+                {t('confirm')}
               </button>
             </div>
           </div>

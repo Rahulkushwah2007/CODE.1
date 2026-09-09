@@ -19,7 +19,7 @@ import {
 import { triggerHaptic, handleRipple } from '../utils/feedback';
 
 export const ProfileView: React.FC = () => {
-  const { role, country, shelters, setCurrentTab } = useApp();
+  const { role, country, shelters, setCurrentTab, t } = useApp();
 
   // Evacuee Profile Form State with local persistence
   const [fullName, setFullName] = useState(() => localStorage.getItem('rsq_profile_name') || 'Aarav Sharma');
@@ -53,16 +53,16 @@ export const ProfileView: React.FC = () => {
     <div id="profile-view" className="max-w-5xl mx-auto p-4 sm:p-6 space-y-6 text-[#F8FAFC]">
       
       {/* Page Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#334155] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-400">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#10B981]">
               EVACUEE CREDENTIALS &bull; {country === 'IND' ? 'INDIA' : country === 'NPL' ? 'NEPAL' : 'ALL REGIONS'}
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-white mt-1">
-            Emergency Evacuee Profile &amp; Pass
+            {t('profile')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 mt-1">
             Keep this digital relief credential accessible offline for rapid intake at disaster safe zones.
@@ -82,9 +82,9 @@ export const ProfileView: React.FC = () => {
         
         {/* Left Column: Digital Emergency Pass (5 cols on lg) */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="bg-gradient-to-b from-[#182742] to-[#0F172A] border border-white/20 rounded-3xl p-6 shadow-2xl elevation-3 relative overflow-hidden">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 shadow-2xl elevation-3 relative overflow-hidden">
             {/* Holographic style corner badge */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <div className="flex items-center justify-between border-b border-[#334155] pb-4">
               <div>
                 <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">
                   RELIEF IDENTIFICATION PASS
@@ -102,7 +102,7 @@ export const ProfileView: React.FC = () => {
             <div className="py-4 space-y-3 text-xs">
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <span className="text-slate-400 text-[10px] uppercase font-mono block">Registered Phone</span>
+                  <span className="text-slate-400 text-[10px] uppercase font-mono block">{t('phoneNumber')}</span>
                   <span className="font-mono font-bold text-white">{phone}</span>
                 </div>
                 <div>
@@ -111,11 +111,11 @@ export const ProfileView: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/5">
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#334155]">
                 <div>
-                  <span className="text-slate-400 text-[10px] uppercase font-mono block">Family Headcount</span>
+                  <span className="text-slate-400 text-[10px] uppercase font-mono block">{t('totalMembers')}</span>
                   <span className="font-bold text-white flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5 text-blue-400" />
+                    <Users className="w-3.5 h-3.5 text-[#F97316]" />
                     {headcount} Persons
                   </span>
                 </div>
@@ -129,7 +129,7 @@ export const ProfileView: React.FC = () => {
               </div>
 
               {medicalFlags && (
-                <div className="pt-2 border-t border-white/5 bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-xl">
+                <div className="pt-2 border-t border-[#334155] bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-xl">
                   <span className="text-rose-400 text-[10px] font-bold uppercase block flex items-center gap-1">
                     <HeartPulse className="w-3 h-3" /> Medical Notes / Care Required
                   </span>
@@ -139,7 +139,7 @@ export const ProfileView: React.FC = () => {
             </div>
 
             {/* Pass Footer */}
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-slate-400">
+            <div className="pt-3 border-t border-[#334155] flex items-center justify-between text-[10px] font-mono text-slate-400">
               <span>Token: RSQ-IND-{phone.slice(-4) || '9876'}</span>
               <span>Gov Verified Protocol</span>
             </div>
@@ -151,32 +151,32 @@ export const ProfileView: React.FC = () => {
               triggerHaptic(25);
               setCurrentTab('shelters');
             }}
-            className="w-full py-3.5 px-4 rounded-2xl bg-[#111C30] hover:bg-[#182742] border border-white/10 text-xs font-bold text-blue-300 hover:text-white transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3.5 px-4 rounded-2xl bg-[#1E293B] hover:bg-[#334155] border border-[#334155] text-xs font-bold text-[#F8FAFC] hover:text-[#10B981] transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
-            <Building className="w-4 h-4 text-blue-400" />
+            <Building className="w-4 h-4 text-[#10B981]" />
             <span>Search Verified Safe Shelters for Family</span>
           </button>
         </div>
 
         {/* Right Column: Profile & Medical Settings Form (7 cols on lg) */}
         <div className="lg:col-span-7 space-y-4">
-          <form onSubmit={handleSave} className="bg-[#111C30] border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
+          <form onSubmit={handleSave} className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 shadow-xl space-y-4">
             <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <UserCheck className="w-4 h-4 text-blue-400" />
+              <UserCheck className="w-4 h-4 text-[#F97316]" />
               Evacuee Personal Details
             </h3>
 
             {/* Full Name */}
             <div className="space-y-1">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                Primary Evacuee / Head of Family
+                {t('fullName')} / {t('headOfFamily')}
               </label>
               <input
                 type="text"
                 value={fullName}
                 onChange={e => setFullName(e.target.value)}
                 placeholder="Full Legal Name"
-                className="w-full px-4 py-3 bg-[#0A1120] border border-white/15 rounded-xl text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+                className="w-full px-4 py-3 bg-[#0B1329] border border-[#334155] rounded-xl text-sm text-white focus:outline-none focus:border-[#F97316]"
               />
             </div>
 
@@ -184,14 +184,14 @@ export const ProfileView: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                  Mobile Number
+                  {t('phoneNumber')}
                 </label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
                   placeholder="+91 / +977 Mobile"
-                  className="w-full px-4 py-3 bg-[#0A1120] border border-white/15 rounded-xl text-sm text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-[#0B1329] border border-[#334155] rounded-xl text-sm text-white focus:outline-none focus:border-[#F97316]"
                 />
               </div>
 
@@ -204,7 +204,7 @@ export const ProfileView: React.FC = () => {
                   value={kinPhone}
                   onChange={e => setKinPhone(e.target.value)}
                   placeholder="Relative / Friend Phone"
-                  className="w-full px-4 py-3 bg-[#0A1120] border border-white/15 rounded-xl text-sm text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-[#0B1329] border border-[#334155] rounded-xl text-sm text-white focus:outline-none focus:border-[#F97316]"
                 />
               </div>
             </div>
@@ -212,7 +212,7 @@ export const ProfileView: React.FC = () => {
             {/* Family Headcount Selector */}
             <div className="space-y-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                Total Family Group Size (Including You)
+                {t('totalMembers')}
               </label>
               <div className="grid grid-cols-6 gap-2">
                 {[1, 2, 3, 4, 5, 6].map(num => (
@@ -225,8 +225,8 @@ export const ProfileView: React.FC = () => {
                     }}
                     className={`py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
                       headcount === num
-                        ? 'bg-blue-600 text-white shadow-md border border-blue-400'
-                        : 'bg-[#0A1120] text-slate-400 hover:text-white border border-white/10'
+                        ? 'bg-[#F97316] text-white shadow-md border border-[#F97316]'
+                        : 'bg-[#0B1329] text-slate-400 hover:text-white border border-[#334155]'
                     }`}
                   >
                     {num === 6 ? '6+' : num}
@@ -245,11 +245,11 @@ export const ProfileView: React.FC = () => {
                 onChange={e => setMedicalFlags(e.target.value)}
                 rows={2}
                 placeholder="List medical conditions, needed medications, wheelchair needs, infant formula, or dietary restrictions..."
-                className="w-full px-4 py-3 bg-[#0A1120] border border-white/15 rounded-xl text-sm text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-[#0B1329] border border-[#334155] rounded-xl text-sm text-white focus:outline-none focus:border-[#F97316]"
               />
             </div>
 
-            {/* Save Button (Claymorphic) */}
+            {/* Save Button */}
             <div className="pt-2 flex items-center justify-between">
               {isSaved ? (
                 <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5 animate-fadeIn">
@@ -264,10 +264,10 @@ export const ProfileView: React.FC = () => {
               <button
                 type="submit"
                 onClick={handleRipple}
-                className="py-3 px-6 rounded-full clay-btn-primary text-white text-xs font-black flex items-center gap-2 cursor-pointer shadow-lg ripple-container"
+                className="py-3 px-6 rounded-xl bg-[#F97316] hover:bg-[#EA580C] text-white text-xs font-black flex items-center gap-2 cursor-pointer shadow-lg"
               >
                 <Save className="w-4 h-4" />
-                <span>Save Profile Credentials</span>
+                <span>{t('saveChanges')}</span>
               </button>
             </div>
           </form>
@@ -275,54 +275,54 @@ export const ProfileView: React.FC = () => {
       </div>
 
       {/* Accordions at the Bottom for Secondary Info */}
-      <div className="pt-6 border-t border-white/10 space-y-3">
+      <div className="pt-6 border-t border-[#334155] space-y-3">
         <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
           Frequently Asked Questions &amp; Relief Policies
         </h3>
 
         {/* FAQ Item 1 */}
-        <div className="bg-[#111C30] border border-white/10 rounded-2xl overflow-hidden">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl overflow-hidden">
           <button
             onClick={() => toggleAccordion('faq-1')}
-            className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-white hover:bg-[#182742] transition-colors cursor-pointer"
+            className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-white hover:bg-[#0B1329] transition-colors cursor-pointer"
           >
             <span>How is my offline QR digital pass used at the shelter?</span>
-            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openAccordion === 'faq-1' ? 'rotate-180 text-blue-400' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openAccordion === 'faq-1' ? 'rotate-180 text-emerald-400' : ''}`} />
           </button>
           {openAccordion === 'faq-1' && (
-            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-white/5 leading-relaxed animate-fadeIn">
+            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-[#334155] leading-relaxed animate-fadeIn">
               Shelter registration volunteers use handheld QR scanners to verify your arrival in under 5 seconds. This grants your family priority bed assignment, ration allocations, and keeps missing persons records synchronized without requiring cellular internet.
             </div>
           )}
         </div>
 
         {/* FAQ Item 2 */}
-        <div className="bg-[#111C30] border border-white/10 rounded-2xl overflow-hidden">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl overflow-hidden">
           <button
             onClick={() => toggleAccordion('faq-2')}
-            className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-white hover:bg-[#182742] transition-colors cursor-pointer"
+            className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-white hover:bg-[#0B1329] transition-colors cursor-pointer"
           >
             <span>Can pets and special mobility equipment be accommodated?</span>
-            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openAccordion === 'faq-2' ? 'rotate-180 text-blue-400' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openAccordion === 'faq-2' ? 'rotate-180 text-emerald-400' : ''}`} />
           </button>
           {openAccordion === 'faq-2' && (
-            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-white/5 leading-relaxed animate-fadeIn">
+            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-[#334155] leading-relaxed animate-fadeIn">
               Verified shelters with the wheelchair accessible tag feature ramps, widened entrances, and ground floor bedding. Animal-friendly designated shelters provide designated kennels and vet support. Check the amenities filter on the Shelters page before proceeding.
             </div>
           )}
         </div>
 
         {/* FAQ Item 3 */}
-        <div className="bg-[#111C30] border border-white/10 rounded-2xl overflow-hidden">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl overflow-hidden">
           <button
             onClick={() => toggleAccordion('faq-3')}
-            className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-white hover:bg-[#182742] transition-colors cursor-pointer"
+            className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-white hover:bg-[#0B1329] transition-colors cursor-pointer"
           >
             <span>What should I do if cellular networks fail?</span>
-            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openAccordion === 'faq-3' ? 'rotate-180 text-blue-400' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openAccordion === 'faq-3' ? 'rotate-180 text-emerald-400' : ''}`} />
           </button>
           {openAccordion === 'faq-3' && (
-            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-white/5 leading-relaxed animate-fadeIn">
+            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-[#334155] leading-relaxed animate-fadeIn">
               Resqtech automatically caches all verified safe zones, GIS maps, and your digital pass locally on your device. You can navigate directly to the nearest highlighted stadium or school even without network connectivity.
             </div>
           )}

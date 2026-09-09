@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 
 export const AnalyticsView: React.FC = () => {
-  const { country, shelters } = useApp();
+  const { country, shelters, t } = useApp();
 
   const countryShelters = useMemo(() => shelters.filter(s => s.country === country), [shelters, country]);
 
@@ -42,7 +42,7 @@ export const AnalyticsView: React.FC = () => {
   const totalAvailable = countryShelters.reduce((acc, s) => acc + s.availableBeds, 0);
 
   const pieData = [
-    { name: 'People Sheltered', value: totalOccupied, color: '#06b6d4' },
+    { name: 'People Sheltered', value: totalOccupied, color: '#f97316' },
     { name: 'Available Vacant Beds', value: totalAvailable, color: '#10b981' }
   ];
 
@@ -58,7 +58,7 @@ export const AnalyticsView: React.FC = () => {
     <div id="analytics-view" className="max-w-6xl mx-auto p-4 sm:p-6 space-y-8 text-[#F8FAFC]">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#243656] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#334155] pb-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
@@ -67,7 +67,7 @@ export const AnalyticsView: React.FC = () => {
             </span>
           </div>
           <h1 className="text-xl sm:text-3xl font-black text-white mt-1">
-            Real-Time Capacity & Logistics Insights ({country === 'IND' ? 'India' : 'Nepal'})
+            {t('analytics')} ({country === 'IND' ? 'India' : 'Nepal'})
           </h1>
         </div>
       </div>
@@ -76,11 +76,11 @@ export const AnalyticsView: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Capacity vs Occupancy Bar Chart */}
-        <div className="bg-[#111C30] border border-[#243656] rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-blue-400" />
-              <span>Shelter Capacity vs Occupancy</span>
+              <BarChart3 className="w-4 h-4 text-[#F97316]" />
+              <span>{t('capacityStatus')}</span>
             </h2>
           </div>
 
@@ -90,10 +90,10 @@ export const AnalyticsView: React.FC = () => {
                 <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 10 }} angle={-25} textAnchor="end" />
                 <YAxis stroke="#64748b" tick={{ fontSize: 10 }} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#0B1329', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
                   itemStyle={{ color: '#f8fafc' }}
                 />
-                <Bar dataKey="Occupied" fill="#06b6d4" radius={[4, 4, 0, 0]} stackId="a" />
+                <Bar dataKey="Occupied" fill="#f97316" radius={[4, 4, 0, 0]} stackId="a" />
                 <Bar dataKey="Available" fill="#10b981" radius={[4, 4, 0, 0]} stackId="a" />
               </BarChart>
             </ResponsiveContainer>
@@ -101,13 +101,13 @@ export const AnalyticsView: React.FC = () => {
         </div>
 
         {/* Aggregate Pie Ratio */}
-        <div className="bg-[#111C30] border border-[#243656] rounded-3xl p-5 sm:p-6 shadow-xl space-y-4 flex flex-col justify-between">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-5 sm:p-6 shadow-xl space-y-4 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
               <PieIcon className="w-4 h-4 text-emerald-400" />
-              <span>Sector Bed Vacancy Ratio</span>
+              <span>{t('vacantBeds')}</span>
             </h2>
-            <span className="text-xs font-mono text-blue-300 font-bold">
+            <span className="text-xs font-mono text-emerald-400 font-bold">
               {Math.round((totalOccupied / ((totalOccupied + totalAvailable) || 1)) * 100)}% Used
             </span>
           </div>
@@ -129,7 +129,7 @@ export const AnalyticsView: React.FC = () => {
                   ))}
                 </Pie>
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#0B1329', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
                 />
                 <Legend verticalAlign="bottom" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
               </PieChart>
@@ -140,11 +140,11 @@ export const AnalyticsView: React.FC = () => {
       </div>
 
       {/* Resource Stockpile Chart */}
-      <div className="bg-[#111C30] border border-[#243656] rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+      <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-amber-400" />
-            <span>Water & Ration Buffer per District Theater</span>
+            <span>{t('resources')}</span>
           </h2>
         </div>
 
@@ -154,11 +154,11 @@ export const AnalyticsView: React.FC = () => {
               <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 10 }} />
               <YAxis stroke="#64748b" tick={{ fontSize: 10 }} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
+                contentStyle={{ backgroundColor: '#0B1329', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
               />
-              <Bar dataKey="WaterL" fill="#38bdf8" name="Potable Water (L)" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Rations" fill="#f59e0b" name="Ration Kits" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Beds" fill="#a855f7" name="Canvas Beds" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="WaterL" fill="#38bdf8" name={t('drinkingWater') + ' (L)'} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Rations" fill="#f59e0b" name={t('hotFood')} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Beds" fill="#10b981" name="Beds" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

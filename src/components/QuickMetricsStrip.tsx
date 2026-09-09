@@ -8,7 +8,7 @@ interface QuickMetricsStripProps {
 }
 
 export const QuickMetricsStrip: React.FC<QuickMetricsStripProps> = ({ onOpenSOS }) => {
-  const { shelters, country } = useApp();
+  const { shelters, country, t } = useApp();
 
   const filteredShelters = shelters.filter(
     s => country === 'ALL' || s.country === country
@@ -32,14 +32,14 @@ export const QuickMetricsStrip: React.FC<QuickMetricsStripProps> = ({ onOpenSOS 
           </div>
           <div>
             <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#64748B] block">
-              Active Shelters
+              {t('activeShelters')}
             </span>
             <div className="flex items-baseline gap-2">
               <span className="text-xl sm:text-2xl font-black text-[#FFFFFF]">
                 {activeSheltersCount}
               </span>
               <span className="text-xs text-[#CBD5E1] font-medium">
-                of {filteredShelters.length} Verified Facilities
+                {t('ofVerifiedFacilities')} ({filteredShelters.length})
               </span>
             </div>
           </div>
@@ -52,14 +52,14 @@ export const QuickMetricsStrip: React.FC<QuickMetricsStripProps> = ({ onOpenSOS 
           </div>
           <div>
             <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#64748B] block">
-              Beds Available
+              {t('bedsAvailable')}
             </span>
             <div className="flex items-baseline gap-2">
               <span className="text-xl sm:text-2xl font-black text-[#10B981]">
                 {availableBeds.toLocaleString()}
               </span>
               <span className="text-xs text-[#CBD5E1] font-medium">
-                / {totalBeds.toLocaleString()} Capacity
+                / {totalBeds.toLocaleString()} {t('totalCapacity')}
               </span>
             </div>
           </div>
@@ -73,7 +73,7 @@ export const QuickMetricsStrip: React.FC<QuickMetricsStripProps> = ({ onOpenSOS 
             </div>
             <div>
               <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#64748B] block">
-                Emergency Helpline
+                {t('emergencyHelpline')}
               </span>
               <div className="text-base sm:text-lg font-black text-[#FFFFFF] font-mono">
                 {country === 'NPL' ? '1155 (Toll-Free)' : '112 (National)'}
@@ -87,7 +87,7 @@ export const QuickMetricsStrip: React.FC<QuickMetricsStripProps> = ({ onOpenSOS 
             className="px-3.5 py-1.5 rounded-lg bg-[#EA580C] hover:bg-[#C2410C] text-white text-xs font-bold transition-colors shrink-0 flex items-center gap-1 shadow-sm"
             title="Call Helpline Now"
           >
-            <span>Call</span>
+            <span>{t('callNow')}</span>
             <ArrowUpRight className="w-3.5 h-3.5 text-white" />
           </a>
         </div>

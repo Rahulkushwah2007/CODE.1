@@ -8,6 +8,8 @@ import {
   Compass,
   Menu,
   ChevronRight,
+  ChevronDown,
+  Globe,
   ShieldAlert,
   Sliders,
   Layers,
@@ -17,7 +19,6 @@ import {
   UserCheck,
   LayoutDashboard,
   HeartHandshake,
-  Radio,
   Sun,
   Moon,
   Loader2,
@@ -25,7 +26,7 @@ import {
 } from 'lucide-react';
 import { ResqtechLogo } from './ResqtechLogo';
 import { triggerHaptic, handleRipple, calculateDistanceKm } from '../utils/feedback';
-import { Shelter } from '../types';
+import { Shelter, AppLanguage } from '../types';
 
 interface NavbarProps {
   onOpenShelterDetails?: (shelter: Shelter, distanceKm?: number) => void;
@@ -49,13 +50,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
     theme,
     toggleTheme,
     locateUserAndFilterNearby,
-    isLocating
+    isLocating,
+    language,
+    setLanguage,
+    t
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [isLocatingNearby, setIsLocatingNearby] = useState(false);
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
 
   // Filter shelters for search suggestions
   const searchSuggestions = React.useMemo(() => {
@@ -72,11 +78,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
       .slice(0, 5);
   }, [searchQuery, shelters, country]);
 
-  // Close search dropdown on click outside
+  // Close search and language dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setShowSearchDropdown(false);
+      }
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setIsLangDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -147,14 +156,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
               <div className="hidden sm:block">
                 <div className="flex items-center gap-1.5">
                   <span className="font-black text-xl tracking-wider text-[#0F172A] dark:text-[#FFFFFF]">
-                    RESQTECH
+                    {t('appName')}
                   </span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#EA580C] text-[#FFFFFF] font-black uppercase">
-                    SOS
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#38BDF8]/20 border border-[#38BDF8]/40 text-[#38BDF8] font-black uppercase">
+                    {t('safeZonesTag')}
                   </span>
                 </div>
                 <p className="text-[10px] text-[#475569] dark:text-slate-300 -mt-0.5 font-medium">
-                  National Disaster Safe Zones &amp; Relocations
+                  {t('appSubtitle')}
                 </p>
               </div>
             </button>
@@ -173,7 +182,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
                   setSearchQuery(e.target.value);
                   setShowSearchDropdown(true);
                 }}
-                placeholder="Search shelter, safe zone, city, district..."
+                placeholder={t('searchPlaceholder')}
                 className="w-full pl-9.5 pr-28 py-2 sm:py-2.5 bg-[#F8FAFC] dark:bg-[#1E293B] border-2 border-[#CBD5E1] dark:border-[#E2E8F0]/30 rounded-full text-xs sm:text-sm text-[#0F172A] dark:text-[#FFFFFF] placeholder-slate-400 focus:outline-none focus:border-[#EA580C] dark:focus:border-[#38BDF8] focus:ring-2 focus:ring-[#EA580C]/20 transition-all font-medium"
                 aria-label="Search disaster shelters"
               />
@@ -243,6 +252,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
           </div>
 
           {/* Right Controls: Quick Locator Dropdown, Theme Switcher & SOS Broadcast */}
+          {/* Right Controls: Theme Switcher, Quick Locator & Language Selector (Replacing SOS) */}
           <div className="flex items-center gap-1.5 sm:gap-2">
             
             {/* Dark / Paper White Mode Toggle */}
@@ -252,25 +262,25 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
                 triggerHaptic(20);
                 toggleTheme();
               }}
-              className="p-2 sm:px-3 sm:py-1.5 rounded-full border border-[#CBD5E1] dark:border-white/20 bg-[#F1F5F9] dark:bg-[#1E293B] text-[#0F172A] dark:text-[#FFFFFF] hover:bg-[#E2E8F0] dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5 text-xs font-bold cursor-pointer shadow-sm"
+              className="p-2 sm:px-3 sm:py-1.5 rounded-full border border-[#CBD5E1] dark:border-[#334155] bg-[#F1F5F9] dark:bg-[#1E293B] text-[#0F172A] dark:text-[#FFFFFF] hover:bg-[#E2E8F0] dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5 text-xs font-bold cursor-pointer shadow-sm"
               title={`Switch to ${theme === 'light' ? 'Dark Mode' : 'Paper White Mode'}`}
               aria-label="Toggle Dark and Light theme"
             >
               {theme === 'light' ? (
                 <>
                   <Moon className="w-3.5 h-3.5 text-indigo-600" />
-                  <span className="hidden md:inline text-[11px] font-semibold text-[#0F172A]">Dark</span>
+                  <span className="hidden md:inline text-[11px] font-semibold text-[#0F172A]">{t('darkTheme')}</span>
                 </>
               ) : (
                 <>
                   <Sun className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="hidden md:inline text-[11px] font-semibold text-white">Paper</span>
+                  <span className="hidden md:inline text-[11px] font-semibold text-white">{t('paperTheme')}</span>
                 </>
               )}
             </button>
 
             {/* Quick Locator Dropdown */}
-            <div className="flex items-center bg-[#F1F5F9] dark:bg-[#1E293B] border border-[#CBD5E1] dark:border-white/20 rounded-full p-0.5 text-[#0F172A] dark:text-[#FFFFFF]">
+            <div className="hidden sm:flex items-center bg-[#F1F5F9] dark:bg-[#1E293B] border border-[#CBD5E1] dark:border-[#334155] rounded-full p-0.5 text-[#0F172A] dark:text-[#FFFFFF]">
               <button
                 onClick={() => {
                   triggerHaptic(15);
@@ -280,7 +290,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
                   country === 'ALL' ? 'bg-[#EA580C] text-[#FFFFFF] shadow-sm' : 'text-[#475569] dark:text-slate-300 hover:text-[#0F172A] dark:hover:text-white'
                 }`}
               >
-                All
+                {t('countryAll')}
               </button>
               <button
                 onClick={() => {
@@ -291,7 +301,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
                   country === 'IND' ? 'bg-[#EA580C] text-[#FFFFFF] shadow-sm' : 'text-[#475569] dark:text-slate-300 hover:text-[#0F172A] dark:hover:text-white'
                 }`}
               >
-                🇮🇳 IND
+                🇮🇳 {t('countryInd')}
               </button>
               <button
                 onClick={() => {
@@ -302,26 +312,109 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
                   country === 'NPL' ? 'bg-[#EA580C] text-[#FFFFFF] shadow-sm' : 'text-[#475569] dark:text-slate-300 hover:text-[#0F172A] dark:hover:text-white'
                 }`}
               >
-                🇳🇵 NPL
+                🇳🇵 {t('countryNpl')}
               </button>
             </div>
 
-            {/* SOS Broadcast Action Button: #EA580C (Signal Amber) solid button */}
-            <button
-              onClick={() => {
-                triggerHaptic([50, 30, 60]);
-                if (onOpenSOS) {
-                  onOpenSOS();
-                } else {
-                  navigateTo('alerts');
-                }
-              }}
-              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full clay-btn-signal bg-[#EA580C] hover:bg-[#C2410C] text-[#FFFFFF] font-black text-xs shadow-md border border-white/30 transition-colors cursor-pointer"
-              title="SOS Emergency Broadcast & Distress Call"
-            >
-              <Radio className="w-3.5 h-3.5 text-white animate-pulse" />
-              <span className="font-bold uppercase tracking-tight">SOS</span>
-            </button>
+            {/* Language Selector in Top Right Corner (Replacing SOS Button) */}
+            <div ref={langRef} className="relative">
+              <button
+                id="btn-language-selector"
+                onClick={() => {
+                  triggerHaptic(15);
+                  setIsLangDropdownOpen(!isLangDropdownOpen);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-[#1E293B] hover:bg-[#334155] border border-[#334155] hover:border-[#EA580C]/60 text-[#FFFFFF] text-xs font-bold transition-all shadow-md cursor-pointer group"
+                title="Choose Language (English, Hindi, Gujarati)"
+                aria-label="Select Application Language"
+                aria-expanded={isLangDropdownOpen}
+              >
+                <Globe className="w-3.5 h-3.5 text-[#38BDF8] group-hover:rotate-45 transition-transform" />
+                <span className="font-bold text-xs tracking-tight text-[#FFFFFF]">
+                  {language === 'en' ? 'English' : language === 'hi' ? 'हिन्दी' : 'ગુજરાતી'}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-[#94A3B8] transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180 text-white' : ''}`} />
+              </button>
+
+              {/* Language Options Dropdown Menu */}
+              {isLangDropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-[#1E293B] border border-[#334155] rounded-2xl shadow-2xl elevation-4 z-50 overflow-hidden animate-fadeIn py-1 text-white">
+                  <div className="px-3.5 py-1.5 text-[10px] font-mono uppercase tracking-wider text-[#64748B] font-bold border-b border-[#334155]/60 flex items-center justify-between">
+                    <span>{t('languageSelect')}</span>
+                    <span className="text-[9px] text-[#38BDF8]">3 Options</span>
+                  </div>
+
+                  {/* Option: English */}
+                  <button
+                    id="lang-option-en"
+                    onClick={() => {
+                      triggerHaptic(20);
+                      setLanguage('en');
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className={`w-full px-3.5 py-2.5 text-left flex items-center justify-between text-xs font-bold hover:bg-[#0F172A] transition-colors cursor-pointer ${
+                      language === 'en' ? 'text-[#38BDF8] bg-[#0F172A]/80 font-black' : 'text-[#CBD5E1]'
+                    }`}
+                  >
+                    <div className="flex flex-col">
+                      <span>English</span>
+                      <span className="text-[10px] text-[#64748B] font-normal">Default</span>
+                    </div>
+                    {language === 'en' && (
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#38BDF8]/20 text-[#38BDF8]">
+                        Active
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Option: Hindi */}
+                  <button
+                    id="lang-option-hi"
+                    onClick={() => {
+                      triggerHaptic(20);
+                      setLanguage('hi');
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className={`w-full px-3.5 py-2.5 text-left flex items-center justify-between text-xs font-bold hover:bg-[#0F172A] transition-colors cursor-pointer ${
+                      language === 'hi' ? 'text-[#EA580C] bg-[#0F172A]/80 font-black' : 'text-[#CBD5E1]'
+                    }`}
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold">हिन्दी</span>
+                      <span className="text-[10px] text-[#64748B] font-normal">Hindi</span>
+                    </div>
+                    {language === 'hi' && (
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#EA580C]/20 text-[#EA580C]">
+                        Active
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Option: Gujarati */}
+                  <button
+                    id="lang-option-gu"
+                    onClick={() => {
+                      triggerHaptic(20);
+                      setLanguage('gu');
+                      setIsLangDropdownOpen(false);
+                    }}
+                    className={`w-full px-3.5 py-2.5 text-left flex items-center justify-between text-xs font-bold hover:bg-[#0F172A] transition-colors cursor-pointer ${
+                      language === 'gu' ? 'text-[#10B981] bg-[#0F172A]/80 font-black' : 'text-[#CBD5E1]'
+                    }`}
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold">ગુજરાતી</span>
+                      <span className="text-[10px] text-[#64748B] font-normal">Gujarati</span>
+                    </div>
+                    {language === 'gu' && (
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#10B981]/20 text-[#10B981]">
+                        Active
+                      </span>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
         </div>
@@ -444,8 +537,50 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
                 </div>
               </nav>
 
-              {/* Mobile Country Selector */}
+              {/* Mobile Language Selector */}
               <div className="pt-2">
+                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1.5">
+                  {t('languageSelect')} / Choose Language
+                </span>
+                <div className="grid grid-cols-3 gap-1.5 bg-[#0A1120] p-1 rounded-xl border border-white/10">
+                  <button
+                    onClick={() => {
+                      triggerHaptic(20);
+                      setLanguage('en');
+                    }}
+                    className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                      language === 'en' ? 'bg-[#38BDF8] text-slate-950 font-black' : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => {
+                      triggerHaptic(20);
+                      setLanguage('hi');
+                    }}
+                    className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                      language === 'hi' ? 'bg-[#EA580C] text-white font-black' : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    हिन्दी
+                  </button>
+                  <button
+                    onClick={() => {
+                      triggerHaptic(20);
+                      setLanguage('gu');
+                    }}
+                    className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                      language === 'gu' ? 'bg-[#10B981] text-white font-black' : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    ગુજરાતી
+                  </button>
+                </div>
+              </div>
+
+              {/* Mobile Country Selector */}
+              <div className="pt-1">
                 <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1.5">
                   Disaster Jurisdiction
                 </span>
@@ -454,19 +589,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS 
                     onClick={() => setCountry('ALL')}
                     className={`py-2 text-xs font-bold rounded-lg ${country === 'ALL' ? 'bg-blue-600 text-white' : 'text-slate-400'}`}
                   >
-                    All
+                    {t('countryAll')}
                   </button>
                   <button
                     onClick={() => setCountry('IND')}
                     className={`py-2 text-xs font-bold rounded-lg ${country === 'IND' ? 'bg-amber-600 text-white' : 'text-slate-400'}`}
                   >
-                    🇮🇳 India
+                    🇮🇳 {t('countryInd')}
                   </button>
                   <button
                     onClick={() => setCountry('NPL')}
                     className={`py-2 text-xs font-bold rounded-lg ${country === 'NPL' ? 'bg-rose-600 text-white' : 'text-slate-400'}`}
                   >
-                    🇳🇵 Nepal
+                    🇳🇵 {t('countryNpl')}
                   </button>
                 </div>
               </div>

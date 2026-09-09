@@ -50,7 +50,8 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
     onlyNearby15Km,
     setOnlyNearby15Km,
     locateUserAndFilterNearby,
-    isLocating
+    isLocating,
+    t
   } = useApp();
 
   // View presentation state: 'both' (Map + Cards) | 'map-only' | 'cards-only'
@@ -144,13 +145,13 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F172A]/5 dark:bg-white/10 text-[#0F172A] dark:text-[#F8FAFC] text-xs font-mono font-bold tracking-wider border border-[#E2E8F0] dark:border-white/10">
                   <Radio className="w-3.5 h-3.5 text-[#EA580C] animate-pulse" />
-                  LIVE SAFE ZONES &bull; {country === 'IND' ? 'INDIA' : country === 'NPL' ? 'NEPAL' : 'ALL REGIONS'}
+                  {t('liveSafeZones')} &bull; {country === 'IND' ? t('countryInd') : country === 'NPL' ? t('countryNpl') : t('countryAll')}
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] dark:text-white mt-1.5 tracking-tight">
-                  Verified Disaster Shelters &amp; Evacuation Points
+                  {t('verifiedDisasterShelters')}
                 </h1>
                 <p className="text-xs sm:text-sm text-[#475569] dark:text-slate-400 mt-1 max-w-2xl font-medium">
-                  Real-time government &amp; NGO safe facilities with live bed capacity, verified clean water, hot food rations, and medical triage.
+                  {t('shelterHeroDesc')}
                 </p>
               </div>
 
@@ -165,7 +166,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                     viewMode === 'both' ? 'bg-[#0F172A] dark:bg-white text-[#FFFFFF] dark:text-[#0F172A] shadow-sm' : 'text-[#475569] dark:text-slate-300 hover:text-[#0F172A] dark:hover:text-white'
                   }`}
                 >
-                  Map + Cards
+                  {t('mapAndCards')}
                 </button>
                 <button
                   onClick={() => {
@@ -176,7 +177,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                     viewMode === 'map' ? 'bg-[#0F172A] dark:bg-white text-[#FFFFFF] dark:text-[#0F172A] shadow-sm' : 'text-[#475569] dark:text-slate-300 hover:text-[#0F172A] dark:hover:text-white'
                   }`}
                 >
-                  Map View
+                  {t('mapView')}
                 </button>
                 <button
                   onClick={() => {
@@ -187,7 +188,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                     viewMode === 'cards' ? 'bg-[#0F172A] dark:bg-white text-[#FFFFFF] dark:text-[#0F172A] shadow-sm' : 'text-[#475569] dark:text-slate-300 hover:text-[#0F172A] dark:hover:text-white'
                   }`}
                 >
-                  Cards ({filteredShelters.length})
+                  {t('cardsView')} ({filteredShelters.length})
                 </button>
               </div>
             </div>
@@ -198,10 +199,10 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                 <Navigation className="w-4 h-4 text-[#EA580C] shrink-0" />
                 <div>
                   <span className="font-bold">
-                    {onlyNearby15Km ? '15 km Proximity Radius Active' : 'Showing All Regional Shelters'}
+                    {onlyNearby15Km ? t('proximityRadiusActive') : t('showingAllRegional')}
                   </span>
                   <span className="font-mono text-[11px] opacity-80 block sm:inline sm:ml-2">
-                    ({filteredShelters.length} shelter{filteredShelters.length === 1 ? '' : 's'} displayed near GPS: {userLocation.lat.toFixed(3)}, {userLocation.lng.toFixed(3)})
+                    ({filteredShelters.length} {t('facilitiesActive')} &bull; GPS: {userLocation.lat.toFixed(3)}, {userLocation.lng.toFixed(3)})
                   </span>
                 </div>
               </div>
@@ -214,7 +215,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                   title="Detect GPS location and refresh nearest shelters"
                 >
                   <Compass className={`w-3.5 h-3.5 text-[#EA580C] ${isLocating ? 'animate-spin' : ''}`} />
-                  <span>{isLocating ? 'Locating GPS...' : 'Nearby 15km'}</span>
+                  <span>{isLocating ? t('locatingGps') : t('nearby15km')}</span>
                 </button>
 
                 <button
@@ -228,7 +229,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                       : 'bg-white dark:bg-[#0F172A] text-slate-800 dark:text-white border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
-                  {onlyNearby15Km ? '15 km Radius: ON' : 'Filter 15 km'}
+                  {onlyNearby15Km ? t('radius15kmOn') : t('filter15km')}
                 </button>
               </div>
             </div>
@@ -242,7 +243,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                   type="text"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Find nearest shelter, district, city, landmark..."
+                  placeholder={t('searchPlaceholder')}
                   className="w-full pl-10 pr-4 py-3 bg-[#FFFFFF] dark:bg-[#1E293B] border-2 border-[#E2E8F0] dark:border-slate-700 rounded-2xl text-sm text-[#0F172A] dark:text-white placeholder-[#475569] dark:placeholder-slate-400 focus:outline-none focus:border-[#EA580C] focus:ring-2 focus:ring-[#EA580C]/20 transition-all font-medium"
                 />
               </div>
@@ -253,13 +254,13 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                   onChange={e => setFilterType(e.target.value)}
                   className="w-full py-3 px-3.5 bg-[#FFFFFF] dark:bg-[#1E293B] border-2 border-[#E2E8F0] dark:border-slate-700 rounded-2xl text-xs sm:text-sm text-[#0F172A] dark:text-white focus:outline-none focus:border-[#EA580C] font-medium cursor-pointer"
                 >
-                  <option value="ALL">All Shelter Types</option>
-                  <option value="Government Relief Camp">Govt Relief Camp</option>
-                  <option value="School">School / College</option>
-                  <option value="Stadium">Stadium / Arena</option>
-                  <option value="Community Hall">Community Hall</option>
-                  <option value="Hospital-supported shelter">Hospital-Supported</option>
-                  <option value="Religious / Community Facility">Religious Facility</option>
+                  <option value="ALL">{t('allShelterTypes')}</option>
+                  <option value="Government Relief Camp">{t('govtReliefCamp')}</option>
+                  <option value="School">{t('schoolCollege')}</option>
+                  <option value="Stadium">{t('stadiumArena')}</option>
+                  <option value="Community Hall">{t('communityHall')}</option>
+                  <option value="Hospital-supported shelter">{t('hospitalSupported')}</option>
+                  <option value="Religious / Community Facility">{t('religiousFacility')}</option>
                 </select>
               </div>
 
@@ -269,17 +270,17 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                   onChange={e => setFilterStatus(e.target.value)}
                   className="w-full py-3 px-3.5 bg-[#FFFFFF] dark:bg-[#1E293B] border-2 border-[#E2E8F0] dark:border-slate-700 rounded-2xl text-xs sm:text-sm text-[#0F172A] dark:text-white focus:outline-none focus:border-[#EA580C] font-medium cursor-pointer"
                 >
-                  <option value="ALL">All Occupancy States</option>
-                  <option value="AVAILABLE">Available (Vacant Beds)</option>
-                  <option value="LIMITED">Limited Capacity</option>
-                  <option value="CRITICAL">Near Full Capacity</option>
+                  <option value="ALL">{t('allOccupancyStates')}</option>
+                  <option value="AVAILABLE">{t('vacantBeds')}</option>
+                  <option value="LIMITED">{t('limitedCapacity')}</option>
+                  <option value="CRITICAL">{t('nearFull')}</option>
                 </select>
               </div>
             </div>
 
             {/* Quick Filter Chips */}
             <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-              <span className="text-[11px] font-mono text-[#475569] dark:text-slate-400 font-bold uppercase mr-1">Filter Features:</span>
+              <span className="text-[11px] font-mono text-[#475569] dark:text-slate-400 font-bold uppercase mr-1">{t('filterFeatures')}:</span>
               
               <button
                 onClick={() => {
@@ -293,7 +294,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                 }`}
               >
                 <HeartPulse className={`w-3.5 h-3.5 ${filterMedical ? 'text-white dark:text-rose-600' : 'text-[#DC2626]'}`} />
-                <span>Medical Support</span>
+                <span>{t('medicalSupport')}</span>
               </button>
 
               <button
@@ -308,7 +309,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                 }`}
               >
                 <Droplet className={`w-3.5 h-3.5 ${filterWater ? 'text-white dark:text-emerald-600' : 'text-[#059669]'}`} />
-                <span>Drinking Water</span>
+                <span>{t('drinkingWater')}</span>
               </button>
 
               <button
@@ -323,7 +324,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                 }`}
               >
                 <Utensils className={`w-3.5 h-3.5 ${filterFood ? 'text-white dark:text-amber-600' : 'text-[#EA580C]'}`} />
-                <span>Hot Food</span>
+                <span>{t('hotFood')}</span>
               </button>
 
               <button
@@ -337,8 +338,8 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                     : 'bg-[#FFFFFF] dark:bg-[#1E293B] border-[#E2E8F0] dark:border-slate-700 text-[#0F172A] dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
                 }`}
               >
-                <ShieldCheck className={`w-3.5 h-3.5 ${filterWheelchair ? 'text-white dark:text-slate-800' : 'text-[#0F172A] dark:text-slate-200]'}`} />
-                <span>Wheelchair Accessible</span>
+                <ShieldCheck className={`w-3.5 h-3.5 ${filterWheelchair ? 'text-white dark:text-slate-800' : 'text-[#0F172A] dark:text-slate-200'}`} />
+                <span>{t('wheelchairAccessible')}</span>
               </button>
             </div>
           </div>
@@ -349,10 +350,10 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
           <div className="space-y-2">
             <div className="flex items-center justify-between px-1">
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#475569] dark:text-slate-400">
-                Interactive Safe Zones &amp; Evacuation Map
+                {t('interactiveMap')}
               </span>
               <span className="text-xs font-mono text-[#0F172A] dark:text-slate-300 font-semibold">
-                Tap any pin for instant details &amp; booking
+                {t('tapPinDetails')}
               </span>
             </div>
             <div className="rounded-3xl overflow-hidden border-2 border-[#E2E8F0] dark:border-slate-800 shadow-xl">
@@ -367,9 +368,9 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
               <h2 className="text-base sm:text-lg font-black text-[#0F172A] dark:text-white flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-[#EA580C]" />
-                <span>Verified Shelter Directory</span>
+                <span>{t('verifiedShelterDirectory')}</span>
                 <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                  {filteredShelters.length} Facilities {onlyNearby15Km ? 'Within 15km' : 'Active'}
+                  {filteredShelters.length} {t('facilitiesActive')} {onlyNearby15Km ? t('within15km') : ''}
                 </span>
               </h2>
 
@@ -382,7 +383,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                   className="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
                 >
                   <Plus className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Register Shelter (Public/Private)</span>
+                  <span>{t('registerShelterBtn')}</span>
                 </button>
                 <span className="text-xs font-mono text-[#475569] dark:text-slate-400 hidden md:inline font-semibold">
                   Live availability &amp; proximity
@@ -393,22 +394,22 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
             {filteredShelters.length === 0 ? (
               <div className="p-8 rounded-3xl bg-white dark:bg-[#0F172A] border-2 border-dashed border-[#E2E8F0] dark:border-slate-800 text-center space-y-3">
                 <MapPin className="w-8 h-8 text-[#EA580C] mx-auto opacity-70" />
-                <h3 className="font-bold text-base text-[#0F172A] dark:text-white">No Shelters in Strict 15 km Radius</h3>
+                <h3 className="font-bold text-base text-[#0F172A] dark:text-white">{t('noSheltersInRadius')}</h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-                  No registered disaster safe hubs within 15 km of your GPS fix. You can view all nearby regional shelters across the state or trigger GPS refresh.
+                  {t('noSheltersDesc')}
                 </p>
                 <div className="flex items-center justify-center gap-2 pt-2">
                   <button
                     onClick={() => setOnlyNearby15Km(false)}
                     className="px-4 py-2 rounded-xl bg-[#EA580C] text-white font-bold text-xs cursor-pointer shadow-md"
                   >
-                    Show All Regional Shelters
+                    {t('showAllRegionalShelters')}
                   </button>
                   <button
                     onClick={() => locateUserAndFilterNearby()}
                     className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white font-bold text-xs cursor-pointer"
                   >
-                    Refresh GPS
+                    {t('refreshGps')}
                   </button>
                 </div>
               </div>
@@ -462,11 +463,11 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                               }`}
                             >
                               {isFull
-                                ? 'AT CAPACITY'
-                                : `${shelter.availableBeds} BEDS LEFT / ${shelter.totalCapacity} TOTAL`}
+                                ? t('atCapacity')
+                                : `${shelter.availableBeds} ${t('bedsLeft')} / ${shelter.totalCapacity} ${t('total')}`}
                             </span>
                             <span className="text-[11px] font-mono font-bold text-[#F97316] block mt-1">
-                              {distanceKm} km away
+                              {distanceKm} {t('kmAway')}
                             </span>
                           </div>
                         </div>
@@ -475,10 +476,10 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                         <div className="space-y-1.5 bg-[#F8FAFC] dark:bg-[#0B1329] p-3 rounded-2xl border border-[#E2E8F0] dark:border-[#334155]">
                           <div className="flex items-center justify-between text-xs font-mono">
                             <span className="text-[#475569] dark:text-[#CBD5E1] font-medium">
-                              Occupancy ({occPct}%)
+                              {t('occupancy')} ({occPct}%)
                             </span>
                             <span className={`font-bold ${isFull ? 'text-[#EF4444]' : 'text-[#10B981]'}`}>
-                              {shelter.availableBeds} Vacant Beds
+                              {shelter.availableBeds} {t('vacantBedsCount')}
                             </span>
                           </div>
                           <div className="w-full h-2 bg-[#E2E8F0] dark:bg-[#334155] rounded-full overflow-hidden">
@@ -495,22 +496,22 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                         <div className="flex flex-wrap gap-1.5 text-[10px] font-mono text-[#0F172A] dark:text-[#CBD5E1]">
                           {shelter.facilities.medicalSupport && (
                             <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#0B1329] border border-[#E2E8F0] dark:border-[#334155] text-[#0F172A] dark:text-[#CBD5E1] flex items-center gap-1 font-semibold">
-                              <HeartPulse className="w-3 h-3 text-[#EF4444]" /> Medical
+                              <HeartPulse className="w-3 h-3 text-[#EF4444]" /> {t('medicalSupport')}
                             </span>
                           )}
                           {shelter.facilities.drinkingWater && (
                             <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#0B1329] border border-[#E2E8F0] dark:border-[#334155] text-[#0F172A] dark:text-[#CBD5E1] flex items-center gap-1 font-semibold">
-                              <Droplet className="w-3 h-3 text-[#10B981]" /> Water
+                              <Droplet className="w-3 h-3 text-[#10B981]" /> {t('drinkingWater')}
                             </span>
                           )}
                           {shelter.facilities.foodAvailable && (
                             <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#0B1329] border border-[#E2E8F0] dark:border-[#334155] text-[#0F172A] dark:text-[#CBD5E1] flex items-center gap-1 font-semibold">
-                              <Utensils className="w-3 h-3 text-[#EA580C]" /> Hot Food
+                              <Utensils className="w-3 h-3 text-[#EA580C]" /> {t('hotFood')}
                             </span>
                           )}
                           {shelter.facilities.wheelchairAccessible && (
                             <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#0B1329] border border-[#E2E8F0] dark:border-[#334155] text-[#0F172A] dark:text-[#CBD5E1] flex items-center gap-1 font-semibold">
-                              Wheelchair
+                              {t('wheelchairAccessible')}
                             </span>
                           )}
                         </div>
@@ -530,7 +531,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                           title="Call Shelter Emergency Contact"
                         >
                           <Phone className="w-3.5 h-3.5 text-[#FFFFFF] shrink-0" />
-                          <span className="truncate">Call Hotline</span>
+                          <span className="truncate">{t('callHotline')}</span>
                         </a>
 
                         {/* Directions */}
@@ -540,7 +541,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                           title="View Directions & Shelter Details"
                         >
                           <Navigation className="w-3.5 h-3.5 text-[#0F172A] dark:text-white shrink-0" />
-                          <span className="truncate">Directions</span>
+                          <span className="truncate">{t('directions')}</span>
                         </button>
 
                         {/* Book Centre in Advance CTA */}
@@ -553,7 +554,7 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                               : 'bg-[#10B981] hover:bg-[#059669] shadow-md shadow-[#10B981]/25 border border-emerald-400/30'
                           }`}
                         >
-                          {isFull ? 'Full' : 'Book Centre in Advance'}
+                          {isFull ? t('full') : t('bookCentreInAdvance')}
                         </button>
                       </div>
                     </div>
@@ -565,55 +566,55 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
         )}
 
         {/* 4. Accordions at the Bottom for Secondary Info */}
-        <div className="pt-8 border-t border-[#E2E8F0] dark:border-slate-800 space-y-3">
-          <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#475569]">
+        <div className="pt-8 border-t border-[#E2E8F0] dark:border-[#334155] space-y-3">
+          <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#475569] dark:text-[#94A3B8]">
             Emergency Shelter Admission Protocols &amp; Guidelines
           </h3>
 
           {/* Accordion Item 1 */}
-          <div className="bg-[#FFFFFF] border-2 border-[#E2E8F0] rounded-2xl overflow-hidden">
+          <div className="bg-[#FFFFFF] dark:bg-[#1E293B] border-2 border-[#E2E8F0] dark:border-[#334155] rounded-2xl overflow-hidden">
             <button
               onClick={() => toggleAccordion('rules-1')}
-              className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-[#0F172A] hover:bg-slate-50 transition-colors cursor-pointer"
+              className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-[#0F172A] dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             >
               <span>What documents or verification are required upon shelter arrival?</span>
-              <ChevronDown className={`w-4 h-4 text-[#475569] transition-transform ${openAccordion === 'rules-1' ? 'rotate-180 text-[#0F172A]' : ''}`} />
+              <ChevronDown className={`w-4 h-4 text-[#475569] dark:text-slate-400 transition-transform ${openAccordion === 'rules-1' ? 'rotate-180 text-[#0F172A] dark:text-white' : ''}`} />
             </button>
             {openAccordion === 'rules-1' && (
-              <div className="px-4 pb-4 pt-1 text-xs text-[#475569] border-t border-[#E2E8F0] leading-relaxed animate-fadeIn">
-                No mandatory national ID is required during life-safety evacuations. Anyone fleeing floodwaters, cyclones, or earthquakes is entitled to admission. The HavenGrid digital QR code or your booking reference expedites bed allocation and family registration.
+              <div className="px-4 pb-4 pt-1 text-xs text-[#475569] dark:text-slate-300 border-t border-[#E2E8F0] dark:border-[#334155] leading-relaxed animate-fadeIn">
+                No mandatory national ID is required during life-safety evacuations. Anyone fleeing floodwaters, cyclones, or earthquakes is entitled to admission. The RESQTECH digital QR code or your booking reference expedites bed allocation and family registration.
               </div>
             )}
           </div>
 
           {/* Accordion Item 2 */}
-          <div className="bg-[#FFFFFF] border-2 border-[#E2E8F0] rounded-2xl overflow-hidden">
+          <div className="bg-[#FFFFFF] dark:bg-[#1E293B] border-2 border-[#E2E8F0] dark:border-[#334155] rounded-2xl overflow-hidden">
             <button
               onClick={() => toggleAccordion('rules-2')}
-              className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-[#0F172A] hover:bg-slate-50 transition-colors cursor-pointer"
+              className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-[#0F172A] dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             >
               <span>What basic relief supplies are provided inside verified shelters?</span>
-              <ChevronDown className={`w-4 h-4 text-[#475569] transition-transform ${openAccordion === 'rules-2' ? 'rotate-180 text-[#0F172A]' : ''}`} />
+              <ChevronDown className={`w-4 h-4 text-[#475569] dark:text-slate-400 transition-transform ${openAccordion === 'rules-2' ? 'rotate-180 text-[#0F172A] dark:text-white' : ''}`} />
             </button>
             {openAccordion === 'rules-2' && (
-              <div className="px-4 pb-4 pt-1 text-xs text-[#475569] border-t border-[#E2E8F0] leading-relaxed animate-fadeIn">
+              <div className="px-4 pb-4 pt-1 text-xs text-[#475569] dark:text-slate-300 border-t border-[#E2E8F0] dark:border-[#334155] leading-relaxed animate-fadeIn">
                 All listed government and partner facilities supply clean potable drinking water (minimum 3L per person per day), dry rations or community kitchen meals, sanitized bedding/blankets, basic first aid, and separate sanitation facilities for women and children.
               </div>
             )}
           </div>
 
           {/* Accordion Item 3 */}
-          <div className="bg-[#FFFFFF] border-2 border-[#E2E8F0] rounded-2xl overflow-hidden">
+          <div className="bg-[#FFFFFF] dark:bg-[#1E293B] border-2 border-[#E2E8F0] dark:border-[#334155] rounded-2xl overflow-hidden">
             <button
               onClick={() => toggleAccordion('rules-3')}
-              className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-[#0F172A] hover:bg-slate-50 transition-colors cursor-pointer"
+              className="w-full p-4 text-left flex items-center justify-between text-xs font-bold text-[#0F172A] dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             >
               <span>How does emergency reservation guarantee a bed?</span>
-              <ChevronDown className={`w-4 h-4 text-[#475569] transition-transform ${openAccordion === 'rules-3' ? 'rotate-180 text-[#0F172A]' : ''}`} />
+              <ChevronDown className={`w-4 h-4 text-[#475569] dark:text-slate-400 transition-transform ${openAccordion === 'rules-3' ? 'rotate-180 text-[#0F172A] dark:text-white' : ''}`} />
             </button>
             {openAccordion === 'rules-3' && (
-              <div className="px-4 pb-4 pt-1 text-xs text-[#475569] border-t border-[#E2E8F0] leading-relaxed animate-fadeIn">
-                When you tap &quot;Book Spot&quot;, our central intake system marks your family headcount against the facility&apos;s available quota for 4 hours. Coordinators at the gate hold this allocation until your arrival.
+              <div className="px-4 pb-4 pt-1 text-xs text-[#475569] dark:text-slate-300 border-t border-[#E2E8F0] dark:border-[#334155] leading-relaxed animate-fadeIn">
+                When you tap &quot;Book Centre in Advance&quot;, our central intake system marks your family headcount against the facility&apos;s available quota for 4 hours. Coordinators at the gate hold this allocation until your arrival.
               </div>
             )}
           </div>

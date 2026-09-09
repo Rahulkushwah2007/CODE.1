@@ -15,7 +15,7 @@ import {
 import { AlertSeverity } from '../types';
 
 export const AlertCenterView: React.FC = () => {
-  const { alerts, acknowledgeAlert, resolveAlert, setSelectedShelterId, setCurrentTab } = useApp();
+  const { alerts, acknowledgeAlert, resolveAlert, setSelectedShelterId, setCurrentTab, t } = useApp();
 
   const [filterSeverity, setFilterSeverity] = useState<string>('ALL');
   const [filterResolved, setFilterResolved] = useState<boolean>(false);
@@ -30,7 +30,7 @@ export const AlertCenterView: React.FC = () => {
     <div id="alert-center-view" className="max-w-5xl mx-auto p-4 sm:p-6 space-y-6 text-[#F8FAFC]">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#243656] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#334155] pb-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
@@ -39,7 +39,7 @@ export const AlertCenterView: React.FC = () => {
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-white mt-1">
-            Emergency Dispatch Alerts & Warnings
+            {t('alerts')}
           </h1>
         </div>
 
@@ -47,7 +47,7 @@ export const AlertCenterView: React.FC = () => {
           <select
             value={filterSeverity}
             onChange={e => setFilterSeverity(e.target.value)}
-            className="bg-[#111C30] border border-[#243656] rounded-xl px-3 py-1.5 text-xs text-white"
+            className="bg-[#1E293B] border border-[#334155] rounded-xl px-3 py-1.5 text-xs text-white"
           >
             <option value="ALL">All Severities</option>
             <option value="CRITICAL">Critical Only</option>
@@ -55,7 +55,7 @@ export const AlertCenterView: React.FC = () => {
             <option value="MEDIUM">Medium</option>
           </select>
 
-          <label className="flex items-center gap-1.5 text-xs text-[#94A3B8] bg-[#111C30] border border-[#243656] px-3 py-1.5 rounded-xl cursor-pointer">
+          <label className="flex items-center gap-1.5 text-xs text-[#CBD5E1] bg-[#1E293B] border border-[#334155] px-3 py-1.5 rounded-xl cursor-pointer">
             <input
               type="checkbox"
               checked={filterResolved}
@@ -70,7 +70,7 @@ export const AlertCenterView: React.FC = () => {
       {/* Alerts list */}
       <div className="space-y-3">
         {filteredAlerts.length === 0 ? (
-          <div className="bg-[#111C30] border border-[#243656] rounded-2xl p-8 text-center text-[#94A3B8] space-y-2">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-8 text-center text-[#94A3B8] space-y-2">
             <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
             <p className="font-semibold text-white text-sm">All Operational Sectors Clear</p>
             <p className="text-xs text-[#94A3B8]">No unacknowledged critical alerts matching current filter.</p>
@@ -84,10 +84,10 @@ export const AlertCenterView: React.FC = () => {
                 key={alt.id}
                 className={`p-4 sm:p-5 rounded-2xl border transition-all ${
                   alt.resolved
-                    ? 'bg-[#0A1120]/60 border-[#243656] opacity-60'
+                    ? 'bg-[#0B1329]/60 border-[#334155] opacity-60'
                     : isCrit
                     ? 'bg-rose-950/40 border-rose-500/70 shadow-lg'
-                    : 'bg-[#111C30] border-[#243656]'
+                    : 'bg-[#1E293B] border-[#334155]'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
@@ -122,15 +122,15 @@ export const AlertCenterView: React.FC = () => {
                         setSelectedShelterId(alt.shelterId);
                         setCurrentTab('shelter-detail');
                       }}
-                      className="px-3 py-1.5 rounded-lg bg-[#182742] hover:bg-[#243656] text-[#CBD5E1] text-xs font-semibold"
+                      className="px-3 py-1.5 rounded-lg bg-[#0B1329] hover:bg-[#334155] text-[#CBD5E1] text-xs font-semibold border border-[#334155] cursor-pointer transition-colors"
                     >
-                      View Facility
+                      {t('viewShelterDetails')}
                     </button>
 
                     {!alt.acknowledged && (
                       <button
                         onClick={() => acknowledgeAlert(alt.id)}
-                        className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold"
+                        className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold cursor-pointer transition-colors"
                       >
                         Acknowledge
                       </button>
@@ -139,7 +139,7 @@ export const AlertCenterView: React.FC = () => {
                     {!alt.resolved ? (
                       <button
                         onClick={() => resolveAlert(alt.id)}
-                        className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
+                        className="px-3.5 py-1.5 rounded-lg bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
                       >
                         <Check className="w-3.5 h-3.5" />
                         <span>Resolve</span>
@@ -156,18 +156,18 @@ export const AlertCenterView: React.FC = () => {
       </div>
 
       {/* Accordion for Secondary Early Warning Protocols */}
-      <div className="pt-6 border-t border-white/10 space-y-3">
+      <div className="pt-6 border-t border-[#334155] space-y-3">
         <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
           Emergency Warning Standards &amp; Siren Protocols
         </h3>
 
-        <div className="bg-[#111C30] border border-white/10 rounded-2xl overflow-hidden">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl overflow-hidden">
           <details className="group">
-            <summary className="p-4 text-xs font-bold text-white hover:bg-[#182742] transition-colors cursor-pointer list-none flex items-center justify-between">
+            <summary className="p-4 text-xs font-bold text-white hover:bg-[#334155] transition-colors cursor-pointer list-none flex items-center justify-between">
               <span>What do the Red, Amber, and Yellow bulletin levels signify?</span>
               <span className="text-slate-400 group-open:rotate-180 transition-transform text-sm">▼</span>
             </summary>
-            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-white/5 leading-relaxed">
+            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-[#334155] leading-relaxed">
               <strong>RED (Critical):</strong> Immediate life-threat. Evacuate to highest elevation shelter within 30 minutes.<br />
               <strong>AMBER (High):</strong> Severe weather or flash flood warning within 6-12 hours. Prepare Go-Bag and vulnerable family members.<br />
               <strong>YELLOW (Medium):</strong> Watch advisory. Monitor Resqtech telemetry and radio broadcasts for updates.
@@ -175,13 +175,13 @@ export const AlertCenterView: React.FC = () => {
           </details>
         </div>
 
-        <div className="bg-[#111C30] border border-white/10 rounded-2xl overflow-hidden">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl overflow-hidden">
           <details className="group">
-            <summary className="p-4 text-xs font-bold text-white hover:bg-[#182742] transition-colors cursor-pointer list-none flex items-center justify-between">
+            <summary className="p-4 text-xs font-bold text-white hover:bg-[#334155] transition-colors cursor-pointer list-none flex items-center justify-between">
               <span>How are false alarms or rumors filtered during disasters?</span>
               <span className="text-slate-400 group-open:rotate-180 transition-transform text-sm">▼</span>
             </summary>
-            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-white/5 leading-relaxed">
+            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-[#334155] leading-relaxed">
               All alerts displayed in Resqtech are cryptographically signed by official State Disaster Management Authorities (SDMA / NDRF in India, NDMA in Nepal) before propagating to client devices.
             </div>
           </details>

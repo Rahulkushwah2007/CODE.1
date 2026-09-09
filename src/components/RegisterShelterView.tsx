@@ -21,7 +21,7 @@ import { ShelterType, ShelterOwnership, Country } from '../types';
 import { triggerHaptic } from '../utils/feedback';
 
 export const RegisterShelterView: React.FC = () => {
-  const { registerShelter, setCurrentTab, setSelectedShelterId, userLocation } = useApp();
+  const { registerShelter, setCurrentTab, setSelectedShelterId, userLocation, t } = useApp();
 
   // Step state
   const [submittedShelterId, setSubmittedShelterId] = useState<string | null>(null);
@@ -141,36 +141,36 @@ export const RegisterShelterView: React.FC = () => {
   if (submittedShelterId) {
     return (
       <div className="max-w-3xl mx-auto p-4 sm:p-8 space-y-6">
-        <div className="bg-white dark:bg-[#0F172A] border-2 border-emerald-200 dark:border-emerald-800/80 rounded-3xl p-6 sm:p-10 text-center shadow-lg space-y-6">
-          <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-950/60 rounded-full flex items-center justify-center mx-auto text-emerald-600 dark:text-emerald-400">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 sm:p-10 text-center shadow-2xl space-y-6">
+          <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto text-[#10B981]">
             <CheckCircle2 className="w-12 h-12" />
           </div>
 
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-[#10B981] border border-emerald-500/30">
               <ShieldCheck className="w-4 h-4" />
               <span>REGISTRATION CODE: {submittedShelterId}</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] dark:text-white">
+            <h1 className="text-2xl sm:text-3xl font-black text-white">
               {ownership} Shelter Successfully Registered!
             </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-300 max-w-lg mx-auto">
+            <p className="text-sm text-slate-300 max-w-lg mx-auto">
               <strong>{name}</strong> is now live in the RESQTECH safe zone database. It has been provisioned with Aadhaar UIDAI verification records and local police clearance.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-slate-50 dark:bg-[#1E293B] rounded-2xl text-left border border-slate-200 dark:border-slate-800">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-[#0B1329] rounded-2xl text-left border border-[#334155]">
             <div>
               <div className="text-[10px] font-mono text-slate-400 font-bold uppercase">Classification</div>
-              <div className="text-xs font-bold text-[#0F172A] dark:text-white mt-0.5">{ownership} Safe Hub</div>
+              <div className="text-xs font-bold text-white mt-0.5">{ownership} Safe Hub</div>
             </div>
             <div>
-              <div className="text-[10px] font-mono text-slate-400 font-bold uppercase">Capacity / Beds</div>
-              <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">{availableBeds} Available ({totalCapacity} Max)</div>
+              <div className="text-[10px] font-mono text-slate-400 font-bold uppercase">{t('totalCapacity')} / {t('bedsLeft')}</div>
+              <div className="text-xs font-bold text-[#10B981] mt-0.5">{availableBeds} Available ({totalCapacity} Max)</div>
             </div>
             <div>
               <div className="text-[10px] font-mono text-slate-400 font-bold uppercase">Location Coordinates</div>
-              <div className="text-xs font-mono text-slate-600 dark:text-slate-300 mt-0.5">{lat.toFixed(4)}, {lng.toFixed(4)}</div>
+              <div className="text-xs font-mono text-slate-300 mt-0.5">{lat.toFixed(4)}, {lng.toFixed(4)}</div>
             </div>
           </div>
 
@@ -180,9 +180,9 @@ export const RegisterShelterView: React.FC = () => {
                 setSelectedShelterId(submittedShelterId);
                 setCurrentTab('shelters');
               }}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#0F172A] dark:bg-white text-white dark:text-[#0F172A] font-bold text-sm shadow hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#F97316] hover:bg-[#EA580C] text-white font-bold text-sm shadow hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>View in Shelters Directory</span>
+              <span>{t('viewAllShelters')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
@@ -190,9 +190,9 @@ export const RegisterShelterView: React.FC = () => {
                 setSelectedShelterId(submittedShelterId);
                 setCurrentTab('map');
               }}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#0B1329] text-slate-200 font-bold text-sm hover:bg-[#334155] border border-[#334155] transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <MapPin className="w-4 h-4 text-[#EA580C]" />
+              <MapPin className="w-4 h-4 text-[#F97316]" />
               <span>Locate on GIS Map</span>
             </button>
           </div>
@@ -202,27 +202,27 @@ export const RegisterShelterView: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 text-[#F8FAFC]">
       
       {/* Header Banner */}
-      <div className="bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm">
+      <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 sm:p-8 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#EA580C]/10 text-[#EA580C] mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20 mb-2">
               <Plus className="w-3.5 h-3.5" />
               <span>FACILITY ONBOARDING &bull; PUBLIC &amp; PRIVATE</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] dark:text-white tracking-tight">
-              Register New Relief Shelter
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              {t('registerShelter')}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-xl">
+            <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
               Add any verified safe haven to RESQTECH. Private entities (hotels, community halls, marriage palaces, school campuses, corporate auditoriums) can offer emergency shelter alongside official government relief camps.
             </p>
           </div>
 
-          <div className="shrink-0 flex items-center gap-2 bg-slate-50 dark:bg-[#1E293B] p-2 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs">
-            <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
-            <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300">
+          <div className="shrink-0 flex items-center gap-2 bg-[#0B1329] p-2.5 rounded-2xl border border-[#334155] text-xs">
+            <ShieldCheck className="w-5 h-5 text-[#10B981] shrink-0" />
+            <span className="text-[11px] font-medium text-slate-300">
               Mandatory Aadhaar &amp; Police Verification Check
             </span>
           </div>
@@ -232,12 +232,12 @@ export const RegisterShelterView: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* Section 1: Classification (Private vs Public / Government) */}
-        <div className="bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
           <div className="flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-[#0F172A] dark:bg-white text-white dark:text-[#0F172A] flex items-center justify-center font-black text-xs">
+            <span className="w-7 h-7 rounded-lg bg-[#F97316] text-white flex items-center justify-center font-black text-xs">
               1
             </span>
-            <h2 className="text-base sm:text-lg font-black text-[#0F172A] dark:text-white">
+            <h2 className="text-base sm:text-lg font-black text-white">
               Shelter Ownership &amp; Facility Type
             </h2>
           </div>
@@ -253,26 +253,26 @@ export const RegisterShelterView: React.FC = () => {
                 }
                 triggerHaptic(10);
               }}
-              className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
+              className={`p-5 rounded-2xl border text-left transition-all cursor-pointer relative ${
                 ownership === 'Private'
-                  ? 'border-[#EA580C] bg-[#EA580C]/5 dark:bg-[#EA580C]/10 ring-2 ring-[#EA580C]/30'
-                  : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-[#1E293B]'
+                  ? 'border-[#F97316] bg-[#F97316]/10 ring-2 ring-[#F97316]/30'
+                  : 'border-[#334155] hover:border-slate-500 bg-[#0B1329]'
               }`}
             >
               <div className="flex items-start justify-between">
-                <div className="p-2.5 rounded-xl bg-orange-100 dark:bg-orange-950/60 text-[#EA580C]">
+                <div className="p-2.5 rounded-xl bg-[#F97316]/20 text-[#F97316]">
                   <Home className="w-6 h-6" />
                 </div>
                 {ownership === 'Private' && (
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-[#EA580C] text-white">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-[#F97316] text-white">
                     Selected
                   </span>
                 )}
               </div>
-              <h3 className="font-bold text-sm text-[#0F172A] dark:text-white mt-3">
+              <h3 className="font-bold text-sm text-white mt-3">
                 Private Shelter / Commercial Facility
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
                 Hotels, resorts, marriage halls, private schools, corporate auditoriums, warehouses, and non-governmental facilities offering safe refuge during disaster.
               </p>
             </button>
@@ -287,26 +287,26 @@ export const RegisterShelterView: React.FC = () => {
                 }
                 triggerHaptic(10);
               }}
-              className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
+              className={`p-5 rounded-2xl border text-left transition-all cursor-pointer relative ${
                 ownership === 'Public / Government'
-                  ? 'border-blue-600 bg-blue-50/50 dark:bg-blue-950/20 ring-2 ring-blue-500/30'
-                  : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-[#1E293B]'
+                  ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/30'
+                  : 'border-[#334155] hover:border-slate-500 bg-[#0B1329]'
               }`}
             >
               <div className="flex items-start justify-between">
-                <div className="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+                <div className="p-2.5 rounded-xl bg-blue-500/20 text-blue-400">
                   <Building2 className="w-6 h-6" />
                 </div>
                 {ownership === 'Public / Government' && (
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-600 text-white">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-500 text-white">
                     Selected
                   </span>
                 )}
               </div>
-              <h3 className="font-bold text-sm text-[#0F172A] dark:text-white mt-3">
+              <h3 className="font-bold text-sm text-white mt-3">
                 Public / Government Relief Camp
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
                 State evacuation shelters, government colleges, municipal stadiums, panchayat bhavans, and civil defence centers operated under disaster protocols.
               </p>
             </button>
@@ -315,8 +315,8 @@ export const RegisterShelterView: React.FC = () => {
           {/* Detailed Type Selection */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
-                Facility Name *
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+                {t('shelterName')} *
               </label>
               <input
                 type="text"
@@ -324,18 +324,18 @@ export const RegisterShelterView: React.FC = () => {
                 placeholder={ownership === 'Private' ? 'e.g., Grand Palace Hotel & Safe Refuge' : 'e.g., Municipal High School Safe Camp'}
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-[#0F172A] dark:text-white font-medium focus:outline-none focus:border-[#EA580C]"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-3 text-sm text-white font-medium focus:outline-none focus:border-[#F97316]"
               />
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 Specific Shelter Category *
               </label>
               <select
                 value={shelterType}
                 onChange={e => setShelterType(e.target.value as ShelterType)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-[#0F172A] dark:text-white font-medium focus:outline-none focus:border-[#EA580C]"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-3 text-sm text-white font-medium focus:outline-none focus:border-[#F97316]"
               >
                 {ownership === 'Private' ? (
                   <>
@@ -363,13 +363,13 @@ export const RegisterShelterView: React.FC = () => {
         </div>
 
         {/* Section 2: Location & GPS Mapping */}
-        <div className="bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-7 h-7 rounded-lg bg-[#0F172A] dark:bg-white text-white dark:text-[#0F172A] flex items-center justify-center font-black text-xs">
+              <span className="w-7 h-7 rounded-lg bg-[#F97316] text-white flex items-center justify-center font-black text-xs">
                 2
               </span>
-              <h2 className="text-base sm:text-lg font-black text-[#0F172A] dark:text-white">
+              <h2 className="text-base sm:text-lg font-black text-white">
                 Location &amp; Geocoding
               </h2>
             </div>
@@ -378,22 +378,22 @@ export const RegisterShelterView: React.FC = () => {
               type="button"
               onClick={handleUseGps}
               disabled={isGpsLoading}
-              className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold text-[#0F172A] dark:text-white flex items-center gap-2 transition-all cursor-pointer"
+              className="px-3.5 py-1.5 rounded-xl bg-[#0B1329] hover:bg-[#334155] border border-[#334155] text-xs font-bold text-white flex items-center gap-2 transition-all cursor-pointer"
             >
-              <Navigation className={`w-3.5 h-3.5 text-[#EA580C] ${isGpsLoading ? 'animate-spin' : ''}`} />
+              <Navigation className={`w-3.5 h-3.5 text-[#F97316] ${isGpsLoading ? 'animate-spin' : ''}`} />
               <span>{isGpsLoading ? 'Getting Coordinates...' : 'Auto-Fill My Live GPS'}</span>
             </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 Country
               </label>
               <select
                 value={country}
                 onChange={e => setCountry(e.target.value as Country)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-[#0F172A] dark:text-white font-medium"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white font-medium"
               >
                 <option value="IND">India (IND)</option>
                 <option value="NPL">Nepal (NPL)</option>
@@ -401,7 +401,7 @@ export const RegisterShelterView: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 State / Province *
               </label>
               <input
@@ -409,12 +409,12 @@ export const RegisterShelterView: React.FC = () => {
                 required
                 value={stateName}
                 onChange={e => setStateName(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-[#0F172A] dark:text-white font-medium"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white font-medium"
               />
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 City / Town *
               </label>
               <input
@@ -422,27 +422,27 @@ export const RegisterShelterView: React.FC = () => {
                 required
                 value={city}
                 onChange={e => setCity(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-[#0F172A] dark:text-white font-medium"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white font-medium"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
-              Full Physical Address / Landmark
+            <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+              {t('shelterAddress')}
             </label>
             <input
               type="text"
               placeholder="e.g., Plot 14, Ring Road, Near Highway Junction"
               value={address}
               onChange={e => setAddress(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-[#0F172A] dark:text-white font-medium"
+              className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white font-medium"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div className="grid grid-cols-2 gap-4 p-4 bg-[#0B1329] rounded-2xl border border-[#334155]">
             <div>
-              <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">
+              <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1">
                 Latitude (GIS Coordinate)
               </label>
               <input
@@ -450,11 +450,11 @@ export const RegisterShelterView: React.FC = () => {
                 step="0.000001"
                 value={lat}
                 onChange={e => setLat(parseFloat(e.target.value) || 0)}
-                className="w-full bg-white dark:bg-[#0F172A] border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-[#0F172A] dark:text-white"
+                className="w-full bg-[#1E293B] border border-[#334155] rounded-xl px-3 py-2 text-xs font-mono text-white"
               />
             </div>
             <div>
-              <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">
+              <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1">
                 Longitude (GIS Coordinate)
               </label>
               <input
@@ -462,30 +462,30 @@ export const RegisterShelterView: React.FC = () => {
                 step="0.000001"
                 value={lng}
                 onChange={e => setLng(parseFloat(e.target.value) || 0)}
-                className="w-full bg-white dark:bg-[#0F172A] border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-[#0F172A] dark:text-white"
+                className="w-full bg-[#1E293B] border border-[#334155] rounded-xl px-3 py-2 text-xs font-mono text-white"
               />
             </div>
           </div>
         </div>
 
         {/* Section 3: Aadhaar ID & Police Verification Check */}
-        <div className="bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-7 h-7 rounded-lg bg-[#0F172A] dark:bg-white text-white dark:text-[#0F172A] flex items-center justify-center font-black text-xs">
+              <span className="w-7 h-7 rounded-lg bg-[#F97316] text-white flex items-center justify-center font-black text-xs">
                 3
               </span>
-              <h2 className="text-base sm:text-lg font-black text-[#0F172A] dark:text-white">
+              <h2 className="text-base sm:text-lg font-black text-white">
                 Government Identity &amp; Police Verification Check
               </h2>
             </div>
-            <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold">
+            <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-500/20 text-[#10B981] border border-emerald-500/30 font-bold">
               Mandatory Protocol
             </span>
           </div>
 
-          <div className="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 rounded-xl flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">
-            <Lock className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+          <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-start gap-2.5 text-xs text-amber-300">
+            <Lock className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
             <span>
               All shelter managers and private facility keyholders must provide valid Aadhaar credentials and designate their local jurisdictional police station. These records are hidden from public view and only accessible during authorized verification audits.
             </span>
@@ -493,7 +493,7 @@ export const RegisterShelterView: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 Facility In-Charge / Host Name *
               </label>
               <input
@@ -502,24 +502,24 @@ export const RegisterShelterView: React.FC = () => {
                 placeholder="Full Name of Primary Keyholder"
                 value={managerName}
                 onChange={e => setManagerName(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-[#0F172A] dark:text-white font-medium"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white font-medium"
               />
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 Host Role / Designation *
               </label>
               <input
                 type="text"
                 value={managerRole}
                 onChange={e => setManagerRole(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-[#0F172A] dark:text-white font-medium"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white font-medium"
               />
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 Aadhaar Number (UIDAI) *
               </label>
               <input
@@ -528,12 +528,12 @@ export const RegisterShelterView: React.FC = () => {
                 placeholder="12-digit Aadhaar Number"
                 value={aadhaarId}
                 onChange={e => setAadhaarId(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-mono text-[#0F172A] dark:text-white font-bold"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm font-mono text-white font-bold"
               />
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 Managing Entity / Organization Name
               </label>
               <input
@@ -541,12 +541,12 @@ export const RegisterShelterView: React.FC = () => {
                 placeholder={ownership === 'Private' ? 'e.g., Sharma Hospitality Pvt Ltd' : 'e.g., Dist. Disaster Cell'}
                 value={managingOrg}
                 onChange={e => setManagingOrg(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-[#0F172A] dark:text-white font-medium"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white font-medium"
               />
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 Local Police Station (Jurisdiction Thana) *
               </label>
               <input
@@ -555,24 +555,24 @@ export const RegisterShelterView: React.FC = () => {
                 placeholder="e.g., Navrangpura Police Station"
                 value={policeStation}
                 onChange={e => setPoliceStation(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-[#0F172A] dark:text-white font-medium"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white font-medium"
               />
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 Police Station Contact / Control Room
               </label>
               <input
                 type="text"
                 value={policeStationPhone}
                 onChange={e => setPoliceStationPhone(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-mono text-[#0F172A] dark:text-white font-medium"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm font-mono text-white font-medium"
               />
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 24x7 Emergency Contact Phone *
               </label>
               <input
@@ -580,12 +580,12 @@ export const RegisterShelterView: React.FC = () => {
                 required
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-mono text-[#0F172A] dark:text-white font-medium"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm font-mono text-white font-medium"
               />
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
                 Official Email
               </label>
               <input
@@ -593,27 +593,27 @@ export const RegisterShelterView: React.FC = () => {
                 placeholder="coordinator@shelter.org"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-[#0F172A] dark:text-white font-medium"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-2.5 text-sm text-white font-medium"
               />
             </div>
           </div>
         </div>
 
         {/* Section 4: Capacity & On-Site Amenities */}
-        <div className="bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
           <div className="flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-[#0F172A] dark:bg-white text-white dark:text-[#0F172A] flex items-center justify-center font-black text-xs">
+            <span className="w-7 h-7 rounded-lg bg-[#F97316] text-white flex items-center justify-center font-black text-xs">
               4
             </span>
-            <h2 className="text-base sm:text-lg font-black text-[#0F172A] dark:text-white">
+            <h2 className="text-base sm:text-lg font-black text-white">
               Capacity &amp; Critical Emergency Amenities
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
-                Total Evacuee Capacity (People) *
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+                {t('totalCapacity')} (People) *
               </label>
               <input
                 type="number"
@@ -626,13 +626,13 @@ export const RegisterShelterView: React.FC = () => {
                   setTotalCapacity(val);
                   setAvailableBeds(val);
                 }}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-mono font-bold text-[#0F172A] dark:text-white"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-3 text-sm font-mono font-bold text-white"
               />
             </div>
 
             <div>
-              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1.5">
-                Initial Available Beds / Sleeping Cots *
+              <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+                {t('bedsLeft')} *
               </label>
               <input
                 type="number"
@@ -641,23 +641,23 @@ export const RegisterShelterView: React.FC = () => {
                 required
                 value={availableBeds}
                 onChange={e => setAvailableBeds(parseInt(e.target.value) || 0)}
-                className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-mono font-bold text-[#0F172A] dark:text-white"
+                className="w-full bg-[#0B1329] border border-[#334155] rounded-xl px-4 py-3 text-sm font-mono font-bold text-white"
               />
             </div>
           </div>
 
           <div className="pt-2">
-            <div className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+            <div className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 mb-3">
               On-Site Support &amp; Safe Zone Capabilities
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {[
-                { key: 'drinkingWater', label: 'Potable Drinking Water' },
-                { key: 'foodAvailable', label: 'Cooked Food / Dry Rations' },
-                { key: 'powerBackup', label: 'Power Backup / Generator' },
-                { key: 'medicalSupport', label: 'On-Site Medical Triage' },
-                { key: 'wheelchairAccessible', label: 'Wheelchair Ramps / Access' },
+                { key: 'drinkingWater', label: t('drinkingWater') },
+                { key: 'foodAvailable', label: t('hotFood') },
+                { key: 'powerBackup', label: t('powerBackup') },
+                { key: 'medicalSupport', label: t('medicalSupport') },
+                { key: 'wheelchairAccessible', label: t('wheelchairAccess') },
                 { key: 'womenSafeSpace', label: 'Dedicated Women Safe Space' },
                 { key: 'childFriendly', label: 'Child Friendly Area' },
                 { key: 'petFriendly', label: 'Pet Friendly / Accommodating' },
@@ -665,7 +665,7 @@ export const RegisterShelterView: React.FC = () => {
               ].map(item => (
                 <label
                   key={item.key}
-                  className="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-center gap-2.5 p-3 rounded-xl bg-[#0B1329] border border-[#334155] cursor-pointer hover:bg-[#334155] transition-colors"
                 >
                   <input
                     type="checkbox"
@@ -676,9 +676,9 @@ export const RegisterShelterView: React.FC = () => {
                         [item.key]: e.target.checked
                       }));
                     }}
-                    className="w-4 h-4 rounded text-[#EA580C] focus:ring-[#EA580C]"
+                    className="w-4 h-4 rounded text-[#F97316] focus:ring-[#F97316]"
                   />
-                  <span className="text-xs font-medium text-[#0F172A] dark:text-slate-200">
+                  <span className="text-xs font-medium text-slate-200">
                     {item.label}
                   </span>
                 </label>
@@ -688,13 +688,13 @@ export const RegisterShelterView: React.FC = () => {
         </div>
 
         {/* Submit Button */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-3xl">
-          <div className="text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-[#1E293B] border border-[#334155] rounded-3xl">
+          <div className="text-xs text-slate-400">
             By registering, this shelter becomes discoverable on the RESQTECH live map and available for proximity routing.
           </div>
           <button
             type="submit"
-            className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-[#EA580C] hover:bg-[#C2410C] text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-[#F97316] hover:bg-[#EA580C] text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
           >
             <ShieldCheck className="w-5 h-5" />
             <span>Complete {ownership} Registration</span>

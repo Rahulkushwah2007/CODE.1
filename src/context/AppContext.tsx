@@ -10,8 +10,10 @@ import {
   Incident,
   ShelterStatus,
   ShelterType,
-  FamilyRequirements
+  FamilyRequirements,
+  AppLanguage
 } from '../types';
+import { translations, Translations } from '../i18n/translations';
 import {
   INITIAL_SHELTERS,
   INITIAL_FAMILIES,
@@ -113,6 +115,11 @@ interface AppContextType {
   locateUserAndFilterNearby: (onSuccess?: (coords: { lat: number; lng: number }, nearest: Shelter, distKm: number) => void) => void;
   isLocating: boolean;
 
+  // Language Localization (English, Hindi, Gujarati)
+  language: AppLanguage;
+  setLanguage: (lang: AppLanguage) => void;
+  t: (key: keyof Translations) => string;
+
   // Reset demo data
   resetDemoData: () => void;
 }
@@ -128,6 +135,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [simulationActive, setSimulationActive] = useState(false);
   const [offlineMode, setOfflineMode] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState('10:46 AM (Live)');
+
+  // Language state: 'en' | 'hi' | 'gu'
+  const [language, setLanguageState] = useState<AppLanguage>(() => {
+    const saved = localStorage.getItem('resqtech_lang');
+    if (saved === 'hi' || saved === 'gu' || saved === 'en') return saved;
+    return 'en';
+  });
+
+  const setLanguage = useCallback((lang: AppLanguage) => {
+    setLanguageState(lang);
+    localStorage.setItem('resqtech_lang', lang);
+  }, []);
+
+  const t = useCallback((key: keyof Translations): string => {
+    const langDict = translations[language] || translations.en;
+    return langDict[key] || translations.en[key] || (key as string);
+  }, [language]);
 
   // Theme state: default to 'dark' (Ultra-dark tactical navy theme)
   const [theme, setThemeState] = useState<'light' | 'dark'>(() => {
@@ -861,6 +885,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setOnlyNearby15Km,
         locateUserAndFilterNearby,
         isLocating,
+        language,
+        setLanguage,
+        t,
         resetDemoData
       }}
     >

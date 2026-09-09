@@ -30,7 +30,8 @@ export const ResourceManagementView: React.FC = () => {
     shelters,
     resourceRequests,
     updateResourceRequestStatus,
-    createResourceRequest
+    createResourceRequest,
+    t
   } = useApp();
 
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
@@ -96,22 +97,22 @@ export const ResourceManagementView: React.FC = () => {
   };
 
   return (
-    <div id="resource-management-view" className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6 text-[#0F172A] dark:text-[#F8FAFC] transition-colors">
+    <div id="resource-management-view" className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6 text-[#F8FAFC]">
       
       {/* Header */}
-      <div className="bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
+      <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-6 sm:p-8 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#EA580C]"></span>
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#EA580C]">
-              EMERGENCY LOGISTICS & RELIEF CONVOYS
+              {t('emergencyLogisticsBanner')}
             </span>
           </div>
-          <h1 className="text-xl sm:text-3xl font-black text-[#0F172A] dark:text-white mt-1">
-            Resource Stockpile & Dispatch Pipeline
+          <h1 className="text-xl sm:text-3xl font-black text-white mt-1">
+            {t('resourcePipeline')}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-2xl font-medium">
-            Real-time tracking of water tankers, ration kits, medical trauma supplies, and bedding dispatches across active disaster sectors.
+          <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl font-medium">
+            {t('resourcePipelineSubtitle')}
           </p>
         </div>
 
@@ -123,70 +124,70 @@ export const ResourceManagementView: React.FC = () => {
           className="px-5 py-3 rounded-2xl bg-[#EA580C] hover:bg-[#C2410C] text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-md cursor-pointer self-start md:self-auto transition-all"
         >
           <Plus className="w-4 h-4" />
-          <span>New Supply Requisition</span>
+          <span>{t('newRequisition')}</span>
         </button>
       </div>
 
       {/* Resource Shortage Detection Cards */}
       <div className="space-y-2">
-        <h2 className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
-          Detected Resource Deficits
+        <h2 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">
+          {t('detectedDeficits')}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           
-          <div className={`p-4 rounded-2xl border-2 transition-all ${
+          <div className={`p-4 rounded-2xl border transition-all ${
             lowWaterShelters.length > 0
-              ? 'bg-blue-50/70 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800 text-blue-950 dark:text-blue-200'
-              : 'bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400'
+              ? 'bg-blue-950/40 border-blue-500/40 text-blue-200'
+              : 'bg-[#1E293B] border-[#334155] text-slate-400'
           }`}>
             <div>
               <div className="flex items-center gap-1.5 font-bold text-sm">
-                <Droplet className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                <span>POTABLE WATER CRITICAL</span>
+                <Droplet className="w-4 h-4 text-blue-400" />
+                <span>{t('potableWaterCritical')}</span>
               </div>
-              <p className="text-xs mt-1 font-semibold">
-                {lowWaterShelters.length} Shelters with &lt;40% reserve
+              <p className="text-xs mt-1 font-semibold text-slate-300">
+                {lowWaterShelters.length} {t('sheltersWithLowReserve')}
               </p>
               {lowWaterShelters.map(s => (
-                <span key={s.id} className="block text-[11px] font-mono mt-0.5 opacity-90">&bull; {s.name}</span>
+                <span key={s.id} className="block text-[11px] font-mono mt-0.5 text-slate-400">&bull; {s.name}</span>
               ))}
             </div>
           </div>
 
-          <div className={`p-4 rounded-2xl border-2 transition-all ${
+          <div className={`p-4 rounded-2xl border transition-all ${
             lowFoodShelters.length > 0
-              ? 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800 text-amber-950 dark:text-amber-200'
-              : 'bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400'
+              ? 'bg-amber-950/40 border-amber-500/40 text-amber-200'
+              : 'bg-[#1E293B] border-[#334155] text-slate-400'
           }`}>
             <div>
               <div className="flex items-center gap-1.5 font-bold text-sm">
-                <Utensils className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                <span>FOOD RATIONS SHORTAGE</span>
+                <Utensils className="w-4 h-4 text-amber-400" />
+                <span>{t('foodRationsShortage')}</span>
               </div>
-              <p className="text-xs mt-1 font-semibold">
-                {lowFoodShelters.length} Shelters with &lt;40% meal kits
+              <p className="text-xs mt-1 font-semibold text-slate-300">
+                {lowFoodShelters.length} {t('sheltersWithLowMealKits')}
               </p>
               {lowFoodShelters.map(s => (
-                <span key={s.id} className="block text-[11px] font-mono mt-0.5 opacity-90">&bull; {s.name}</span>
+                <span key={s.id} className="block text-[11px] font-mono mt-0.5 text-slate-400">&bull; {s.name}</span>
               ))}
             </div>
           </div>
 
-          <div className={`p-4 rounded-2xl border-2 transition-all ${
+          <div className={`p-4 rounded-2xl border transition-all ${
             lowMedShelters.length > 0
-              ? 'bg-rose-50/70 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800 text-rose-950 dark:text-rose-200'
-              : 'bg-white dark:bg-[#0F172A] border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400'
+              ? 'bg-rose-950/40 border-rose-500/40 text-rose-200'
+              : 'bg-[#1E293B] border-[#334155] text-slate-400'
           }`}>
             <div>
               <div className="flex items-center gap-1.5 font-bold text-sm">
-                <HeartPulse className="w-4 h-4 text-rose-600 dark:text-rose-400" />
-                <span>MEDICAL DEPLETION</span>
+                <HeartPulse className="w-4 h-4 text-rose-400" />
+                <span>{t('medicalDepletion')}</span>
               </div>
-              <p className="text-xs mt-1 font-semibold">
-                {lowMedShelters.length} Shelters with depleted first aid
+              <p className="text-xs mt-1 font-semibold text-slate-300">
+                {lowMedShelters.length} {t('sheltersWithDepletedMeds')}
               </p>
               {lowMedShelters.map(s => (
-                <span key={s.id} className="block text-[11px] font-mono mt-0.5 opacity-90">&bull; {s.name}</span>
+                <span key={s.id} className="block text-[11px] font-mono mt-0.5 text-slate-400">&bull; {s.name}</span>
               ))}
             </div>
           </div>
@@ -194,36 +195,36 @@ export const ResourceManagementView: React.FC = () => {
         </div>
       </div>
 
-      {/* Supply Pipeline Requisitions List - CLEANED UP & UNCLUTTERED (User Request #8) */}
-      <div className="bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-7 shadow-md space-y-4 transition-colors">
+      {/* Supply Pipeline Requisitions List */}
+      <div className="bg-[#1E293B] border border-[#334155] rounded-3xl p-5 sm:p-7 shadow-md space-y-4">
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#334155]">
           <div>
             <div className="flex items-center gap-2">
               <Boxes className="w-5 h-5 text-[#EA580C]" />
-              <h2 className="text-base sm:text-lg font-black text-[#0F172A] dark:text-white">Active Dispatch Pipeline</h2>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                {filteredRequests.length} Active
+              <h2 className="text-base sm:text-lg font-black text-white">{t('activePipeline')}</h2>
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-[#0B1329] text-slate-300 border border-[#334155]">
+                {filteredRequests.length} {t('activeBadge')}
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Clean pipeline tracking: Pending &rarr; Approved &rarr; Dispatched &rarr; Delivered
+            <p className="text-xs text-slate-400 mt-0.5">
+              {t('pipelineFlowDescription')}
             </p>
           </div>
 
           {/* Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono font-bold">Filter:</span>
+            <span className="text-xs text-slate-400 font-mono font-bold">{t('filter')}:</span>
             <select
               value={filterStatus}
               onChange={e => setFilterStatus(e.target.value)}
-              className="bg-white dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-[#0F172A] dark:text-white font-medium focus:outline-none focus:border-[#EA580C]"
+              className="bg-[#0B1329] border border-[#334155] rounded-xl px-3 py-1.5 text-xs text-white font-medium focus:outline-none focus:border-[#EA580C]"
             >
-              <option value="ALL">All States ({resourceRequests.length})</option>
-              <option value="Pending">Pending Approval</option>
-              <option value="Approved">Approved / Staged</option>
-              <option value="Dispatched">En Route (Dispatched)</option>
-              <option value="Delivered">Delivered & Verified</option>
+              <option value="ALL">{t('allStates')} ({resourceRequests.length})</option>
+              <option value="Pending">{t('pending')}</option>
+              <option value="Approved">{t('approved')}</option>
+              <option value="Dispatched">{t('dispatched')}</option>
+              <option value="Delivered">{t('delivered')}</option>
             </select>
           </div>
         </div>
@@ -236,7 +237,7 @@ export const ResourceManagementView: React.FC = () => {
             return (
               <div
                 key={req.id}
-                className="bg-slate-50/70 dark:bg-[#1E293B]/60 hover:bg-slate-100/80 dark:hover:bg-[#1E293B] border border-slate-200 dark:border-slate-700/80 rounded-2xl p-3.5 transition-all"
+                className="bg-[#0B1329]/80 hover:bg-[#0B1329] border border-[#334155] rounded-2xl p-3.5 transition-all"
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                   
@@ -244,7 +245,7 @@ export const ResourceManagementView: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setExpandedRequestId(isExpanded ? null : req.id)}
-                      className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors cursor-pointer"
+                      className="p-1 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
                       title="Toggle details"
                     >
                       {isExpanded ? (
@@ -256,35 +257,35 @@ export const ResourceManagementView: React.FC = () => {
 
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold text-slate-500 dark:text-slate-400">
+                        <span className="font-mono text-xs font-bold text-slate-400">
                           {req.id}
                         </span>
                         <span className={`px-2 py-0.5 rounded-full font-mono font-bold text-[10px] border ${getStatusBadge(req.status)}`}>
-                          {req.status}
+                          {t(req.status.toLowerCase()) || req.status}
                         </span>
                         <span className={`px-2 py-0.5 rounded-full font-mono font-bold text-[10px] ${
                           req.priority === 'CRITICAL'
-                            ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300'
-                            : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                            ? 'bg-rose-950/60 text-rose-300 border border-rose-800'
+                            : 'bg-slate-800 text-slate-300 border border-slate-700'
                         }`}>
                           {req.priority}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-[#0F172A] dark:text-white">
+                        <span className="font-bold text-sm text-white">
                           {req.quantity.toLocaleString()} {req.unit} &bull; {req.resourceName}
                         </span>
                       </div>
 
-                      <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                      <div className="text-xs text-slate-400 flex items-center gap-1.5">
                         <MapPin className="w-3 h-3 text-[#EA580C]" />
-                        <span className="font-medium text-[#0F172A] dark:text-slate-200">{req.shelterName}</span>
+                        <span className="font-medium text-slate-200">{req.shelterName}</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Action step button - single, clean, uncluttered action */}
+                  {/* Action step button */}
                   <div className="flex items-center gap-2 self-end md:self-center shrink-0">
                     {req.status === 'Pending' && (
                       <button
@@ -294,7 +295,7 @@ export const ResourceManagementView: React.FC = () => {
                         }}
                         className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs cursor-pointer shadow-sm flex items-center gap-1"
                       >
-                        <span>Approve Release</span>
+                        <span>{t('approveRelease')}</span>
                         <ArrowRight className="w-3 h-3" />
                       </button>
                     )}
@@ -308,7 +309,7 @@ export const ResourceManagementView: React.FC = () => {
                         className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-sm"
                       >
                         <Truck className="w-3.5 h-3.5" />
-                        <span>Dispatch Convoy</span>
+                        <span>{t('dispatchConvoy')}</span>
                       </button>
                     )}
 
@@ -318,37 +319,37 @@ export const ResourceManagementView: React.FC = () => {
                           triggerHaptic([30, 20, 50]);
                           updateResourceRequestStatus(req.id, 'Delivered');
                         }}
-                        className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-sm"
+                        className="px-3.5 py-1.5 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-sm"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Confirm Handover</span>
+                        <span>{t('confirmHandover')}</span>
                       </button>
                     )}
 
                     {req.status === 'Delivered' && (
-                      <span className="px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-xs font-mono font-bold flex items-center gap-1">
+                      <span className="px-3 py-1 rounded-xl bg-emerald-950/40 text-emerald-300 border border-emerald-800 text-xs font-mono font-bold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Delivered</span>
+                        <span>{t('delivered')}</span>
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Collapsible Details - keeps pipeline clean unless needed */}
+                {/* Collapsible Details */}
                 {isExpanded && (
-                  <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700/80 text-xs space-y-1.5 pl-7">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 dark:text-slate-300">
+                  <div className="mt-3 pt-3 border-t border-[#334155] text-xs space-y-1.5 pl-7">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-300">
                       <div>
-                        <span className="text-slate-400 font-mono text-[10px] uppercase block">Requested By</span>
+                        <span className="text-slate-400 font-mono text-[10px] uppercase block">{t('requestedBy')}</span>
                         <span className="font-semibold">{req.requestedBy}</span>
                       </div>
                       <div>
-                        <span className="text-slate-400 font-mono text-[10px] uppercase block">Logged Timestamp</span>
+                        <span className="text-slate-400 font-mono text-[10px] uppercase block">{t('loggedTimestamp')}</span>
                         <span className="font-mono">{new Date(req.timestamp).toLocaleString()}</span>
                       </div>
                     </div>
                     {req.notes && (
-                      <div className="p-2 rounded-xl bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 italic text-[11px]">
+                      <div className="p-2 rounded-xl bg-[#0B1329] border border-[#334155] text-slate-300 italic text-[11px]">
                         "{req.notes}"
                       </div>
                     )}
@@ -362,13 +363,13 @@ export const ResourceManagementView: React.FC = () => {
 
       {/* NEW REQUEST MODAL */}
       {newRequestModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 text-[#0F172A] dark:text-white">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-              <h3 className="font-bold text-base">New Emergency Supply Requisition</h3>
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 text-white">
+            <div className="flex items-center justify-between border-b border-[#334155] pb-3">
+              <h3 className="font-bold text-base">{t('newEmergencySupplyRequisition')}</h3>
               <button
                 onClick={() => setNewRequestModal(false)}
-                className="text-slate-400 hover:text-slate-700 dark:hover:text-white text-xl font-bold p-1 cursor-pointer"
+                className="text-slate-400 hover:text-white text-xl font-bold p-1 cursor-pointer"
               >
                 &times;
               </button>
@@ -376,11 +377,11 @@ export const ResourceManagementView: React.FC = () => {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Target Shelter</label>
+                <label className="text-slate-400 font-bold block mb-1">{t('targetShelter')}</label>
                 <select
                   value={selectedShelterId}
                   onChange={e => setSelectedShelterId(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-[#0F172A] dark:text-white font-medium"
+                  className="w-full bg-[#0B1329] border border-[#334155] rounded-xl p-2.5 text-white font-medium"
                 >
                   {countryShelters.map(s => (
                     <option key={s.id} value={s.id}>
@@ -391,11 +392,11 @@ export const ResourceManagementView: React.FC = () => {
               </div>
 
               <div>
-                <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Supply Item</label>
+                <label className="text-slate-400 font-bold block mb-1">{t('supplyItem')}</label>
                 <select
                   value={resName}
                   onChange={e => setResName(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-[#0F172A] dark:text-white font-medium"
+                  className="w-full bg-[#0B1329] border border-[#334155] rounded-xl p-2.5 text-white font-medium"
                 >
                   <option value="Potable Drinking Water Tanker">Potable Drinking Water Tanker</option>
                   <option value="Dry Ration Emergency Kits">Dry Ration Emergency Kits</option>
@@ -408,63 +409,64 @@ export const ResourceManagementView: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Quantity</label>
+                  <label className="text-slate-400 font-bold block mb-1">{t('quantity')}</label>
                   <input
                     type="number"
                     value={resQty}
                     onChange={e => setResQty(parseInt(e.target.value) || 1)}
-                    className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2 text-[#0F172A] dark:text-white font-mono"
+                    className="w-full bg-[#0B1329] border border-[#334155] rounded-xl p-2 text-white font-mono"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Unit</label>
+                  <label className="text-slate-400 font-bold block mb-1">{t('unit')}</label>
                   <input
                     type="text"
                     value={resUnit}
                     onChange={e => setResUnit(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2 text-[#0F172A] dark:text-white"
+                    className="w-full bg-[#0B1329] border border-[#334155] rounded-xl p-2 text-white"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Priority</label>
+                <label className="text-slate-400 font-bold block mb-1">{t('priority')}</label>
                 <select
                   value={resPriority}
                   onChange={e => setResPriority(e.target.value as ResourcePriority)}
-                  className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-[#0F172A] dark:text-white font-medium"
+                  className="w-full bg-[#0B1329] border border-[#334155] rounded-xl p-2.5 text-white font-medium"
                 >
-                  <option value="CRITICAL">Critical (Immediate convoy dispatch)</option>
-                  <option value="HIGH">High (Next logistics rotation)</option>
-                  <option value="MEDIUM">Medium (Within 12 hours)</option>
-                  <option value="LOW">Low (Replenishment)</option>
+                  <option value="CRITICAL">{t('priorityCritical')}</option>
+                  <option value="HIGH">{t('priorityHigh')}</option>
+                  <option value="MEDIUM">{t('priorityMedium')}</option>
+                  <option value="LOW">{t('priorityLow')}</option>
                 </select>
               </div>
 
               <div>
-                <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Operational Notes</label>
+                <label className="text-slate-400 font-bold block mb-1">{t('operationalNotes')}</label>
                 <input
                   type="text"
                   value={resNotes}
                   onChange={e => setResNotes(e.target.value)}
-                  placeholder="e.g. Bridge washed out, use North bypass"
-                  className="w-full bg-slate-50 dark:bg-[#1E293B] border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-[#0F172A] dark:text-white text-xs"
-                />
+                  placeholder={t('operationalNotesPlaceholder')}
+                  className="w-full bg-[#0B1329] border border-[#334155] rounded-xl p-2.5 text-white text-xs"
+                >
+                </input>
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <div className="flex justify-end gap-2 pt-2 border-t border-[#334155]">
               <button
                 onClick={() => setNewRequestModal(false)}
-                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#0B1329] hover:bg-slate-800 text-slate-300 text-xs font-semibold cursor-pointer border border-[#334155]"
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={handleCreateRequest}
                 className="px-5 py-2.5 rounded-xl bg-[#EA580C] hover:bg-[#C2410C] text-white font-black text-xs shadow-md cursor-pointer transition-all"
               >
-                Authorize & Dispatch
+                {t('authorizeAndDispatch')}
               </button>
             </div>
           </div>
@@ -472,31 +474,31 @@ export const ResourceManagementView: React.FC = () => {
       )}
 
       {/* Accordions at the Bottom for Secondary Relief Info */}
-      <div className="pt-6 border-t border-slate-200 dark:border-slate-800 space-y-3">
-        <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-          Relief Distribution Guidelines &amp; Logistics Protocols
+      <div className="pt-6 border-t border-[#334155] space-y-3">
+        <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
+          {t('reliefGuidelinesTitle')}
         </h3>
 
-        <div className="bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl overflow-hidden">
           <details className="group">
-            <summary className="p-4 text-xs font-bold text-[#0F172A] dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer list-none flex items-center justify-between">
-              <span>What is the minimum potable water allocation per evacuee?</span>
+            <summary className="p-4 text-xs font-bold text-white hover:bg-slate-800/50 transition-colors cursor-pointer list-none flex items-center justify-between">
+              <span>{t('guidelineWaterQ')}</span>
               <span className="text-slate-400 group-open:rotate-180 transition-transform text-sm">▼</span>
             </summary>
-            <div className="px-4 pb-4 pt-1 text-xs text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 leading-relaxed">
-              Standard Sphere emergency benchmarks require 15 Liters total per person per day (including 3-5 Liters drinking water, with the remainder for food preparation and sanitation). Facilities with less than 40% threshold trigger high-priority convoy dispatch.
+            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-[#334155] leading-relaxed">
+              {t('guidelineWaterA')}
             </div>
           </details>
         </div>
 
-        <div className="bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+        <div className="bg-[#1E293B] border border-[#334155] rounded-2xl overflow-hidden">
           <details className="group">
-            <summary className="p-4 text-xs font-bold text-[#0F172A] dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer list-none flex items-center justify-between">
-              <span>How are cold-chain medical supplies (insulin, antivenom) transported?</span>
+            <summary className="p-4 text-xs font-bold text-white hover:bg-slate-800/50 transition-colors cursor-pointer list-none flex items-center justify-between">
+              <span>{t('guidelineColdChainQ')}</span>
               <span className="text-slate-400 group-open:rotate-180 transition-transform text-sm">▼</span>
             </summary>
-            <div className="px-4 pb-4 pt-1 text-xs text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 leading-relaxed">
-              All temperature-sensitive medicines are routed via refrigerated mobile triage vans with solar-backup generators. Emergency air-drops by disaster response helicopters are deployed if road access is blocked by landslides or flooding.
+            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-[#334155] leading-relaxed">
+              {t('guidelineColdChainA')}
             </div>
           </details>
         </div>
