@@ -35,7 +35,8 @@ import {
   Calendar,
   Sparkles,
   Award,
-  Loader2
+  Loader2,
+  Radio
 } from 'lucide-react';
 import { searchLocations } from '../services/geocoding';
 
@@ -44,6 +45,7 @@ interface ShelterMapProps {
   initialZoom?: number;
   highlightShelterId?: string | null;
   onSelectShelter?: (shelter: Shelter) => void;
+  onOpenSOS?: () => void;
 }
 
 type MapLayerType = 'street' | 'satellite' | 'terrain' | 'dark';
@@ -62,7 +64,8 @@ export const ShelterMap: React.FC<ShelterMapProps> = ({
   initialCenter,
   initialZoom,
   highlightShelterId,
-  onSelectShelter
+  onSelectShelter,
+  onOpenSOS
 }) => {
   const { country, setCountry, shelters, setSelectedShelterId, setCurrentTab } = useApp();
   
@@ -965,6 +968,24 @@ export const ShelterMap: React.FC<ShelterMapProps> = ({
       {/* GOOGLE MAPS CONTROLS (TOP RIGHT / BOTTOM RIGHT) */}
       {/* ============================================================ */}
       <div className="absolute top-4 right-4 z-30 flex flex-col items-end gap-2">
+        {/* SOS Broadcast Button in Map View: #EA580C (Signal Amber) solid button */}
+        <button
+          id="map-sos-broadcast-btn"
+          type="button"
+          onClick={() => {
+            if (onOpenSOS) {
+              onOpenSOS();
+            } else {
+              setCurrentTab('alerts');
+            }
+          }}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-full clay-btn-signal bg-[#EA580C] hover:bg-[#C2410C] text-[#FFFFFF] font-black text-xs uppercase tracking-wider shadow-2xl border-2 border-white/40 cursor-pointer transition-all ripple-container"
+          title="SOS Emergency Distress Broadcast"
+        >
+          <Radio className="w-4 h-4 text-white animate-pulse" />
+          <span>SOS Broadcast</span>
+        </button>
+
         {/* Layer Switcher Button */}
         <div className="relative">
           <button

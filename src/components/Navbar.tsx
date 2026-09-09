@@ -1,325 +1,494 @@
-import React, { useState } from 'react';
-import { useApp } from '../context/AppContext';
+import React, { useState, useRef, useEffect } from 'react';
+import { useApp, NavigationTab } from '../context/AppContext';
 import {
-  ShieldAlert,
-  MapPin,
-  Bell,
   Search,
-  UserCheck,
+  MapPin,
   X,
   Phone,
-  PhoneCall,
-  Compass
+  Compass,
+  Menu,
+  ChevronRight,
+  ShieldAlert,
+  Sliders,
+  Layers,
+  Building2,
+  PackageCheck,
+  AlertOctagon,
+  UserCheck,
+  LayoutDashboard,
+  HeartHandshake,
+  Radio,
+  Sun,
+  Moon,
+  Loader2,
+  PlusCircle
 } from 'lucide-react';
-import { UserRole } from '../types';
+import { ResqtechLogo } from './ResqtechLogo';
+import { triggerHaptic, handleRipple, calculateDistanceKm } from '../utils/feedback';
+import { Shelter } from '../types';
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  onOpenShelterDetails?: (shelter: Shelter, distanceKm?: number) => void;
+  onOpenSOS?: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ onOpenShelterDetails, onOpenSOS }) => {
   const {
     country,
     setCountry,
     role,
     setRole,
+    currentTab,
     setCurrentTab,
     searchQuery,
     setSearchQuery,
-    lastSyncTime,
-    notifications,
-    unreadNotifCount,
-    markNotifRead,
-    clearAllNotifs,
-    currentIncident
+    shelters,
+    setSelectedShelterId,
+    alerts,
+    currentIncident,
+    theme,
+    toggleTheme,
+    locateUserAndFilterNearby,
+    isLocating
   } = useApp();
 
-  const [showNotifDrawer, setShowNotifDrawer] = useState(false);
-  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [isLocatingNearby, setIsLocatingNearby] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
-  const roleLabels: Record<UserRole, { label: string; badge: string; color: string }> = {
-    public: { label: 'Public Evacuee', badge: 'PUBLIC', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' },
-    staff: { label: 'Shelter Staff', badge: 'STAFF', color: 'bg-blue-500/15 text-blue-400 border-blue-500/30' },
-    manager: { label: 'Shelter Manager', badge: 'MANAGER', color: 'bg-amber-500/15 text-amber-400 border-amber-500/30' },
-    volunteer: { label: 'Volunteer Responder', badge: 'VOLUNTEER', color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30' },
-    district_admin: { label: 'District Coordinator', badge: 'COORDINATOR', color: 'bg-sky-500/15 text-sky-400 border-sky-500/30' },
-    super_admin: { label: 'National EOC Commander', badge: 'COMMANDER', color: 'bg-rose-500/15 text-rose-400 border-rose-500/30' }
+  // Filter shelters for search suggestions
+  const searchSuggestions = React.useMemo(() => {
+    if (!searchQuery || searchQuery.trim().length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    return shelters
+      .filter(s => (country === 'ALL' || s.country === country))
+      .filter(s =>
+        s.name.toLowerCase().includes(q) ||
+        s.city.toLowerCase().includes(q) ||
+        s.district.toLowerCase().includes(q) ||
+        s.type.toLowerCase().includes(q)
+      )
+      .slice(0, 5);
+  }, [searchQuery, shelters, country]);
+
+  // Close search dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowSearchDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSelectShelter = (shelter: Shelter) => {
+    triggerHaptic(20);
+    setSelectedShelterId(shelter.id);
+    setShowSearchDropdown(false);
+    setSearchQuery(shelter.name);
+    if (onOpenShelterDetails) {
+      onOpenShelterDetails(shelter, 2.4);
+    } else {
+      setCurrentTab('shelters');
+    }
   };
+
+  const handleNearbySearch = () => {
+    triggerHaptic([30, 20, 40]);
+    setIsLocatingNearby(true);
+    locateUserAndFilterNearby((coords, nearest, distKm) => {
+      setIsLocatingNearby(false);
+      if (onOpenShelterDetails && nearest) {
+        onOpenShelterDetails(nearest, distKm);
+      }
+    });
+  };
+
+  const navigateTo = (tab: NavigationTab) => {
+    triggerHaptic(20);
+    setCurrentTab(tab);
+    setMobileMenuOpen(false);
+  };
+
+  const criticalAlertCount = alerts.filter(a => a.status === 'active' && a.severity === 'CRITICAL').length;
 
   return (
     <>
-      {/* Top Incident Banner */}
-      {currentIncident && (
-        <div id="emergency-banner" className="bg-[#140A10] border-b border-rose-900/50 px-4 py-1.5 text-xs text-rose-200 flex flex-wrap items-center justify-between gap-2 z-40">
-          <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-            </span>
-            <span className="font-bold text-white tracking-wide uppercase px-1.5 py-0.5 rounded bg-rose-600 text-[10px]">
-              {currentIncident.severity} ADVISORY
-            </span>
-            <span className="font-semibold text-white">{currentIncident.name}</span>
-            <span className="hidden md:inline text-rose-300/80">({currentIncident.region})</span>
-            <span className="hidden lg:inline text-rose-300/70 border-l border-rose-800/60 pl-2">
-              {currentIncident.evacuationOrders}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 ml-auto">
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-950/70 border border-rose-800/60 text-[11px] font-mono text-rose-200">
-              <PhoneCall className="w-3 h-3 text-rose-400" />
-              <span>24/7 Helpline: <strong>112</strong> (IND) &bull; <strong>1155</strong> (NPL)</span>
-            </div>
-            <button
-              id="btn-banner-find-shelter"
-              onClick={() => setCurrentTab('map')}
-              className="px-2.5 py-1 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
-            >
-              <Compass className="w-3 h-3" />
-              <span>Find Safe Shelter</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Main Command Navbar */}
-      <header id="main-navbar" className="sticky top-0 z-30 bg-[#090E1A]/95 backdrop-blur-xl border-b border-[#1E2E4A] shadow-lg shadow-black/25 text-[#F8FAFC]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      {/* Sticky Header: Paper White in Light Mode, Deep Slate in Dark Mode */}
+      <header
+        id="resqtech-floating-top-bar"
+        className="sticky top-0 z-40 bg-[#FFFFFF] dark:bg-[#0F172A] border-b border-[#E2E8F0] dark:border-white/10 text-[#0F172A] dark:text-[#FFFFFF] shadow-sm dark:shadow-md pt-safe transition-colors duration-200"
+      >
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 sm:h-18 flex items-center justify-between gap-2 sm:gap-4">
           
-          {/* Brand */}
-          <div className="flex items-center gap-3">
+          {/* Left: Mobile Hamburger & RESQTECH Logo */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Mobile Hamburger Button */}
             <button
-              id="brand-logo-btn"
-              onClick={() => setCurrentTab('landing')}
-              className="flex items-center gap-2.5 group cursor-pointer text-left"
+              id="btn-mobile-hamburger"
+              onClick={() => {
+                triggerHaptic(20);
+                setMobileMenuOpen(!mobileMenuOpen);
+              }}
+              className="lg:hidden p-2 rounded-xl bg-[#F1F5F9] dark:bg-white/10 hover:bg-[#E2E8F0] dark:hover:bg-white/20 text-[#0F172A] dark:text-[#FFFFFF] border border-[#CBD5E1] dark:border-white/20 transition-colors cursor-pointer"
+              aria-label="Open Navigation Menu"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 p-0.5 shadow-md shadow-blue-600/25 flex items-center justify-center">
-                <div className="w-full h-full bg-[#0A1120] rounded-[10px] flex items-center justify-center">
-                  <ShieldAlert className="w-5 h-5 text-blue-400 group-hover:scale-105 transition-transform" />
-                </div>
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-black text-lg tracking-wider text-white">
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+
+            {/* Brand Logo & Name: Logo with RESQTECH */}
+            <button
+              onClick={() => navigateTo('shelters')}
+              className="flex items-center gap-2.5 text-left cursor-pointer group"
+            >
+              <ResqtechLogo size="md" breathing={isLocatingNearby || isLocating} />
+              <div className="hidden sm:block">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-black text-xl tracking-wider text-[#0F172A] dark:text-[#FFFFFF]">
                     RESQTECH
                   </span>
-                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded font-bold">
-                    DISASTER PORTAL
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#EA580C] text-[#FFFFFF] font-black uppercase">
+                    SOS
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-400 tracking-tight font-medium hidden sm:block">
-                  Verified Disaster Shelters &bull; India &amp; Nepal
+                <p className="text-[10px] text-[#475569] dark:text-slate-300 -mt-0.5 font-medium">
+                  National Disaster Safe Zones &amp; Relocations
                 </p>
               </div>
             </button>
           </div>
 
-          {/* Search bar */}
-          <div className="hidden md:flex flex-1 max-w-xs lg:max-w-sm mx-2">
-            <div className="relative w-full">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          {/* Center: Robust Floating Search Option */}
+          <div ref={searchRef} className="flex-1 max-w-md lg:max-w-lg relative mx-1">
+            <div className="relative flex items-center">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
               <input
-                id="global-search-input"
+                id="top-shelter-search-input"
                 type="text"
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search shelter, district, city..."
-                className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#0F172A] border border-[#1E2E4A] rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                onFocus={() => setShowSearchDropdown(true)}
+                onChange={e => {
+                  setSearchQuery(e.target.value);
+                  setShowSearchDropdown(true);
+                }}
+                placeholder="Search shelter, safe zone, city, district..."
+                className="w-full pl-9.5 pr-28 py-2 sm:py-2.5 bg-[#F8FAFC] dark:bg-[#1E293B] border-2 border-[#CBD5E1] dark:border-[#E2E8F0]/30 rounded-full text-xs sm:text-sm text-[#0F172A] dark:text-[#FFFFFF] placeholder-slate-400 focus:outline-none focus:border-[#EA580C] dark:focus:border-[#38BDF8] focus:ring-2 focus:ring-[#EA580C]/20 transition-all font-medium"
+                aria-label="Search disaster shelters"
               />
-              {searchQuery && (
+
+              {searchQuery ? (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs cursor-pointer"
+                  className="absolute right-24 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer"
+                  aria-label="Clear search"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
-              )}
-            </div>
-          </div>
+              ) : null}
 
-          {/* Center / Right controls */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            
-            {/* Country Selector */}
-            <div className="flex items-center bg-[#0F172A] border border-[#1E2E4A] rounded-lg p-0.5 shadow-inner">
+              {/* Quick "Nearby" GPS action inside search bar */}
               <button
-                id="btn-country-all"
-                onClick={() => setCountry('ALL')}
-                className={`flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-                  country === 'ALL'
-                    ? 'bg-blue-600 text-white font-bold shadow-sm shadow-blue-600/30'
-                    : 'text-slate-300 hover:text-white hover:bg-[#182742]'
-                }`}
-                title="View All Shelters Across Subcontinent (India & Nepal)"
+                type="button"
+                onClick={handleNearbySearch}
+                disabled={isLocatingNearby || isLocating}
+                className="absolute right-1.5 px-2.5 py-1 rounded-full bg-[#EA580C] hover:bg-[#C2410C] text-[10px] sm:text-xs font-bold text-white flex items-center gap-1 transition-colors cursor-pointer shadow-sm disabled:opacity-75"
+                title="Find verified shelters nearest to your GPS position (15 km radius)"
               >
-                <span className="text-sm">🌏</span>
-                <span className="hidden sm:inline">All</span>
-              </button>
-              <button
-                id="btn-country-ind"
-                onClick={() => setCountry('IND')}
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-                  country === 'IND'
-                    ? 'bg-amber-600 text-white font-bold shadow-sm shadow-amber-600/30'
-                    : 'text-slate-300 hover:text-white hover:bg-[#182742]'
-                }`}
-                title="Switch to India Shelters & Districts"
-              >
-                <span className="text-sm">🇮🇳</span>
-                <span className="hidden sm:inline">India</span>
-              </button>
-              <button
-                id="btn-country-npl"
-                onClick={() => setCountry('NPL')}
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-                  country === 'NPL'
-                    ? 'bg-rose-600 text-white font-bold shadow-sm shadow-rose-600/30'
-                    : 'text-slate-300 hover:text-white hover:bg-[#182742]'
-                }`}
-                title="Switch to Nepal Shelters & Municipalities"
-              >
-                <span className="text-sm">🇳🇵</span>
-                <span className="hidden sm:inline">Nepal</span>
+                {isLocatingNearby || isLocating ? (
+                  <Loader2 className="w-3 h-3 text-white animate-spin" />
+                ) : (
+                  <Compass className="w-3 h-3 text-white" />
+                )}
+                <span className="hidden sm:inline">Nearby (15km)</span>
               </button>
             </div>
 
-            {/* Quick Emergency Call Button */}
-            <a
-              href="tel:112"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-sm shadow-rose-600/25 transition-colors border border-rose-500"
-              title="Emergency Helpline: 112 (India) / 1155 (Nepal)"
-            >
-              <Phone className="w-3.5 h-3.5 text-white" />
-              <span className="font-mono">112 / 1155</span>
-            </a>
-
-            {/* Role Switcher */}
-            <div className="relative">
-              <button
-                id="btn-role-switcher"
-                onClick={() => setShowRoleModal(!showRoleModal)}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${roleLabels[role].color}`}
-              >
-                <UserCheck className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{roleLabels[role].label}</span>
-                <span className="sm:hidden">{roleLabels[role].badge}</span>
-              </button>
-
-              {/* Role Dropdown */}
-              {showRoleModal && (
-                <div
-                  id="role-dropdown-menu"
-                  className="absolute right-0 mt-2 w-56 bg-[#0F172A] border border-[#1E2E4A] rounded-xl shadow-2xl p-2 z-50 text-xs"
-                >
-                  <div className="px-2 py-1 text-[11px] uppercase tracking-wider text-slate-400 font-bold border-b border-[#1E2E4A] pb-1 mb-1">
-                    Operating Role
-                  </div>
-                  {(Object.keys(roleLabels) as UserRole[]).map(r => (
+            {/* Live Search Auto-Suggestions Dropdown */}
+            {showSearchDropdown && searchSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-[#FFFFFF] border-2 border-[#E2E8F0] rounded-2xl shadow-2xl elevation-4 z-50 overflow-hidden animate-fadeIn text-[#0F172A]">
+                <div className="p-2 border-b border-[#E2E8F0] text-[10px] font-mono text-[#475569] uppercase tracking-wider flex justify-between bg-slate-50">
+                  <span>Verified Safe Zones</span>
+                  <span>{searchSuggestions.length} found</span>
+                </div>
+                <div className="divide-y divide-[#E2E8F0] max-h-64 overflow-y-auto">
+                  {searchSuggestions.map(shelter => (
                     <button
-                      key={r}
-                      id={`role-option-${r}`}
-                      onClick={() => {
-                        setRole(r);
-                        setShowRoleModal(false);
-                        if (r === 'public') setCurrentTab('finder');
-                        if (r === 'manager') setCurrentTab('manager-dashboard');
-                        if (r === 'district_admin' || r === 'super_admin') setCurrentTab('command');
-                        if (r === 'volunteer') setCurrentTab('volunteers');
-                      }}
-                      className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors cursor-pointer ${
-                        role === r ? 'bg-blue-600/20 text-blue-400 font-bold border border-blue-500/30' : 'text-slate-300 hover:bg-[#182742] hover:text-white'
-                      }`}
+                      key={shelter.id}
+                      onClick={() => handleSelectShelter(shelter)}
+                      className="w-full p-3 text-left hover:bg-slate-50 transition-colors flex items-center justify-between gap-2 cursor-pointer group"
                     >
-                      <span>{roleLabels[r].label}</span>
-                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${roleLabels[r].color}`}>
-                        {roleLabels[r].badge}
+                      <div className="space-y-0.5">
+                        <div className="text-xs font-bold text-[#0F172A] group-hover:text-[#EA580C]">
+                          {shelter.name}
+                        </div>
+                        <div className="text-[11px] text-[#475569] flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-[#EA580C] shrink-0" />
+                          <span>{shelter.city}, {shelter.district}</span>
+                        </div>
+                      </div>
+                      <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full ${
+                        shelter.status === 'AVAILABLE' ? 'bg-[#059669] text-[#FFFFFF]' :
+                        shelter.status === 'LIMITED' ? 'bg-[#EA580C] text-[#FFFFFF]' :
+                        'bg-[#DC2626] text-[#FFFFFF]'
+                      }`}>
+                        {shelter.status === 'AVAILABLE' ? `${shelter.availableBeds} BEDS LEFT` : shelter.status}
                       </span>
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Controls: Quick Locator Dropdown, Theme Switcher & SOS Broadcast */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            
+            {/* Dark / Paper White Mode Toggle */}
+            <button
+              id="btn-theme-toggle"
+              onClick={() => {
+                triggerHaptic(20);
+                toggleTheme();
+              }}
+              className="p-2 sm:px-3 sm:py-1.5 rounded-full border border-[#CBD5E1] dark:border-white/20 bg-[#F1F5F9] dark:bg-[#1E293B] text-[#0F172A] dark:text-[#FFFFFF] hover:bg-[#E2E8F0] dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5 text-xs font-bold cursor-pointer shadow-sm"
+              title={`Switch to ${theme === 'light' ? 'Dark Mode' : 'Paper White Mode'}`}
+              aria-label="Toggle Dark and Light theme"
+            >
+              {theme === 'light' ? (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="hidden md:inline text-[11px] font-semibold text-[#0F172A]">Dark</span>
+                </>
+              ) : (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="hidden md:inline text-[11px] font-semibold text-white">Paper</span>
+                </>
               )}
+            </button>
+
+            {/* Quick Locator Dropdown */}
+            <div className="flex items-center bg-[#F1F5F9] dark:bg-[#1E293B] border border-[#CBD5E1] dark:border-white/20 rounded-full p-0.5 text-[#0F172A] dark:text-[#FFFFFF]">
+              <button
+                onClick={() => {
+                  triggerHaptic(15);
+                  setCountry('ALL');
+                }}
+                className={`px-2 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
+                  country === 'ALL' ? 'bg-[#EA580C] text-[#FFFFFF] shadow-sm' : 'text-[#475569] dark:text-slate-300 hover:text-[#0F172A] dark:hover:text-white'
+                }`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => {
+                  triggerHaptic(15);
+                  setCountry('IND');
+                }}
+                className={`px-2 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
+                  country === 'IND' ? 'bg-[#EA580C] text-[#FFFFFF] shadow-sm' : 'text-[#475569] dark:text-slate-300 hover:text-[#0F172A] dark:hover:text-white'
+                }`}
+              >
+                🇮🇳 IND
+              </button>
+              <button
+                onClick={() => {
+                  triggerHaptic(15);
+                  setCountry('NPL');
+                }}
+                className={`px-2 py-1 text-xs font-bold rounded-full transition-all cursor-pointer ${
+                  country === 'NPL' ? 'bg-[#EA580C] text-[#FFFFFF] shadow-sm' : 'text-[#475569] dark:text-slate-300 hover:text-[#0F172A] dark:hover:text-white'
+                }`}
+              >
+                🇳🇵 NPL
+              </button>
             </div>
 
-            {/* Notification Bell */}
-            <div className="relative">
-              <button
-                id="btn-notifications"
-                onClick={() => setShowNotifDrawer(!showNotifDrawer)}
-                className="relative p-2 rounded-lg bg-[#0F172A] border border-[#1E2E4A] text-slate-300 hover:text-white hover:border-blue-500/40 transition-colors cursor-pointer shadow-sm"
-                title="Notifications"
-              >
-                <Bell className="w-4 h-4" />
-                {unreadNotifCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white rounded-full text-[10px] font-bold flex items-center justify-center animate-pulse">
-                    {unreadNotifCount}
-                  </span>
-                )}
-              </button>
+            {/* SOS Broadcast Action Button: #EA580C (Signal Amber) solid button */}
+            <button
+              onClick={() => {
+                triggerHaptic([50, 30, 60]);
+                if (onOpenSOS) {
+                  onOpenSOS();
+                } else {
+                  navigateTo('alerts');
+                }
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full clay-btn-signal bg-[#EA580C] hover:bg-[#C2410C] text-[#FFFFFF] font-black text-xs shadow-md border border-white/30 transition-colors cursor-pointer"
+              title="SOS Emergency Broadcast & Distress Call"
+            >
+              <Radio className="w-3.5 h-3.5 text-white animate-pulse" />
+              <span className="font-bold uppercase tracking-tight">SOS</span>
+            </button>
+          </div>
 
-              {/* Notification Drawer Popover */}
-              {showNotifDrawer && (
-                <div
-                  id="notifications-popover"
-                  className="absolute right-0 mt-2 w-80 sm:w-96 bg-[#0F172A] border border-[#1E2E4A] rounded-xl shadow-2xl p-3 z-50 text-xs"
+        </div>
+      </header>
+
+      {/* Mobile Hamburger Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="w-4/5 max-w-sm h-full bg-[#FFFFFF] dark:bg-[#0F172A] border-r border-[#E2E8F0] dark:border-white/15 p-6 flex flex-col justify-between shadow-2xl transition-colors">
+            
+            <div className="space-y-6">
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-white/10 pb-4">
+                <ResqtechLogo size="sm" showText={true} />
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 rounded-full bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-white cursor-pointer"
                 >
-                  <div className="flex items-center justify-between pb-2 border-b border-[#1E2E4A]">
-                    <div className="flex items-center gap-2">
-                      <Bell className="w-4 h-4 text-blue-400" />
-                      <span className="font-bold text-white">Disaster Alerts &amp; Logs</span>
-                      {unreadNotifCount > 0 && (
-                        <span className="px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-semibold border border-rose-500/30">
-                          {unreadNotifCount} new
-                        </span>
-                      )}
-                    </div>
-                    <button
-                      onClick={clearAllNotifs}
-                      className="text-[11px] text-slate-400 hover:text-blue-400 cursor-pointer"
-                    >
-                      Clear
-                    </button>
-                  </div>
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-                  <div className="max-h-72 overflow-y-auto divide-y divide-[#1E2E4A] my-2">
-                    {notifications.length === 0 ? (
-                      <div className="py-6 text-center text-slate-400">
-                        No active dispatch alerts
-                      </div>
-                    ) : (
-                      notifications.map(n => (
-                        <div
-                          key={n.id}
-                          onClick={() => markNotifRead(n.id)}
-                          className={`py-2 px-1 cursor-pointer transition-colors ${
-                            !n.read ? 'bg-[#182742]/80 rounded' : 'opacity-80 hover:bg-[#182742]'
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-1">
-                            <span className="font-semibold text-white">{n.title}</span>
-                            <span className="text-[10px] text-slate-400 font-mono">{n.time}</span>
-                          </div>
-                          <p className="text-slate-300 text-[11px] mt-0.5">{n.desc}</p>
-                        </div>
-                      ))
-                    )}
+              {/* Navigation Links - Dedicated Separate Pages adhering to prompt */}
+              <nav className="space-y-1.5">
+                <button
+                  onClick={() => navigateTo('shelters')}
+                  className={`w-full flex items-center justify-between p-3.5 rounded-2xl text-sm font-bold transition-all cursor-pointer ${
+                    currentTab === 'shelters' || currentTab === 'map' || currentTab === 'finder'
+                      ? 'bg-[#EA580C] text-white shadow-lg'
+                      : 'text-[#0F172A] dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Building2 className="w-5 h-5 text-[#EA580C]" />
+                    <span>Shelters (15km Radius)</span>
                   </div>
-                  
-                  <div className="pt-2 border-t border-[#1E2E4A] text-[10px] text-slate-400 flex justify-between">
-                    <span>Last Sync: {lastSyncTime}</span>
-                    <button
-                      onClick={() => {
-                        setShowNotifDrawer(false);
-                        setCurrentTab('alerts');
-                      }}
-                      className="text-blue-400 hover:underline flex items-center gap-0.5 cursor-pointer"
-                    >
-                      View All Bulletins →
-                    </button>
+                  <ChevronRight className="w-4 h-4 opacity-60" />
+                </button>
+
+                <button
+                  onClick={() => navigateTo('register-shelter')}
+                  className={`w-full flex items-center justify-between p-3.5 rounded-2xl text-sm font-bold transition-all cursor-pointer ${
+                    currentTab === 'register-shelter'
+                      ? 'bg-[#EA580C] text-white shadow-lg'
+                      : 'text-[#0F172A] dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5 border border-dashed border-[#EA580C]/40'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <PlusCircle className="w-5 h-5 text-emerald-500" />
+                    <span>Register Shelter (Public/Private)</span>
                   </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bold">
+                    Add
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => navigateTo('resources')}
+                  className={`w-full flex items-center justify-between p-3.5 rounded-2xl text-sm font-bold transition-all cursor-pointer ${
+                    currentTab === 'resources' ? 'bg-[#059669] text-white shadow-lg' : 'text-[#0F172A] dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <PackageCheck className="w-5 h-5 text-[#059669]" />
+                    <span>Relief Resources</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 opacity-60" />
+                </button>
+
+                <button
+                  onClick={() => navigateTo('alerts')}
+                  className={`w-full flex items-center justify-between p-3.5 rounded-2xl text-sm font-bold transition-all cursor-pointer ${
+                    currentTab === 'alerts' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-200 hover:bg-white/5'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <AlertOctagon className="w-5 h-5 text-rose-400" />
+                    <span>Disaster Alerts</span>
+                  </div>
+                  {criticalAlertCount > 0 && (
+                    <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-bold">
+                      {criticalAlertCount}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => navigateTo('profile')}
+                  className={`w-full flex items-center justify-between p-3.5 rounded-2xl text-sm font-bold transition-all cursor-pointer ${
+                    currentTab === 'profile' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-200 hover:bg-white/5'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <UserCheck className="w-5 h-5 text-purple-400" />
+                    <span>Evacuee Profile &amp; Pass</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 opacity-60" />
+                </button>
+
+                <div className="pt-2 border-t border-white/10 space-y-1">
+                  <button
+                    onClick={() => navigateTo('command')}
+                    className="w-full flex items-center justify-between p-3 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5 cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <LayoutDashboard className="w-4 h-4 text-sky-400" />
+                      <span>Command Center (EOC)</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => navigateTo('volunteers')}
+                    className="w-full flex items-center justify-between p-3 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5 cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <HeartHandshake className="w-4 h-4 text-indigo-400" />
+                      <span>Volunteer Network</span>
+                    </div>
+                  </button>
                 </div>
-              )}
+              </nav>
+
+              {/* Mobile Country Selector */}
+              <div className="pt-2">
+                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1.5">
+                  Disaster Jurisdiction
+                </span>
+                <div className="grid grid-cols-3 gap-1.5 bg-[#0A1120] p-1 rounded-xl border border-white/10">
+                  <button
+                    onClick={() => setCountry('ALL')}
+                    className={`py-2 text-xs font-bold rounded-lg ${country === 'ALL' ? 'bg-blue-600 text-white' : 'text-slate-400'}`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setCountry('IND')}
+                    className={`py-2 text-xs font-bold rounded-lg ${country === 'IND' ? 'bg-amber-600 text-white' : 'text-slate-400'}`}
+                  >
+                    🇮🇳 India
+                  </button>
+                  <button
+                    onClick={() => setCountry('NPL')}
+                    className={`py-2 text-xs font-bold rounded-lg ${country === 'NPL' ? 'bg-rose-600 text-white' : 'text-slate-400'}`}
+                  >
+                    🇳🇵 Nepal
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Emergency Helpline Box in Drawer */}
+            <div className="bg-rose-950/40 border border-rose-500/30 rounded-2xl p-4 text-center space-y-1">
+              <span className="text-[10px] font-mono font-bold text-rose-300 uppercase block">
+                24/7 National Emergency Hotline
+              </span>
+              <a
+                href="tel:112"
+                className="inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-rose-600 text-white font-black text-sm w-full shadow-lg"
+              >
+                <Phone className="w-4 h-4" />
+                <span>Call 112 (IND) / 1155 (NPL)</span>
+              </a>
             </div>
 
           </div>
         </div>
-      </header>
+      )}
     </>
   );
 };

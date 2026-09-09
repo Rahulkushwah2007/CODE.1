@@ -9,6 +9,7 @@ import {
   VolunteerOpportunity,
   Incident,
   ShelterStatus,
+  ShelterType,
   FamilyRequirements
 } from '../types';
 import {
@@ -19,12 +20,15 @@ import {
   INITIAL_VOLUNTEER_OPPORTUNITIES,
   INCIDENTS_DATA
 } from '../data/mockData';
+import { calculateDistanceKm } from '../utils/feedback';
 
 export type NavigationTab =
   | 'landing'
   | 'finder'
   | 'map'
   | 'shelters'
+  | 'register-shelter'
+  | 'profile'
   | 'shelter-detail'
   | 'manager-dashboard'
   | 'intake'
@@ -65,6 +69,7 @@ interface AppContextType {
   currentIncident: Incident | undefined;
   
   // Actions
+  registerShelter: (data: Partial<Shelter> & { name: string; type: ShelterType; city: string; state: string; totalCapacity: number; country: Country }) => Shelter;
   updateShelterOccupancy: (shelterId: string, delta: number) => void;
   setShelterOccupancy: (shelterId: string, count: number) => void;
   updateShelterResource: (shelterId: string, resourceKey: keyof Shelter['resources'], available: number) => void;
@@ -95,6 +100,19 @@ interface AppContextType {
   markNotifRead: (id: string) => void;
   clearAllNotifs: () => void;
   
+  // Theme (Paper White default vs Dark Mode)
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
+  toggleTheme: () => void;
+
+  // Location & Radius Filtering (15km Nearby Main Dashboard)
+  userLocation: { lat: number; lng: number };
+  setUserLocation: (loc: { lat: number; lng: number }) => void;
+  onlyNearby15Km: boolean;
+  setOnlyNearby15Km: (val: boolean) => void;
+  locateUserAndFilterNearby: (onSuccess?: (coords: { lat: number; lng: number }, nearest: Shelter, distKm: number) => void) => void;
+  isLocating: boolean;
+
   // Reset demo data
   resetDemoData: () => void;
 }
@@ -104,12 +122,54 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [country, setCountryState] = useState<Country>('IND');
   const [role, setRole] = useState<UserRole>('district_admin');
-  const [currentTab, setCurrentTab] = useState<NavigationTab>('command');
+  const [currentTab, setCurrentTab] = useState<NavigationTab>('shelters');
   const [selectedShelterId, setSelectedShelterId] = useState<string | null>('SH-IND-AHM-01');
   const [searchQuery, setSearchQuery] = useState('');
   const [simulationActive, setSimulationActive] = useState(false);
   const [offlineMode, setOfflineMode] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState('10:46 AM (Live)');
+
+  // Theme state: default to 'light' (Paper White theme)
+  const [theme, setThemeState] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('resqtech_theme');
+    return saved === 'dark' ? 'dark' : 'light';
+  });
+
+  const setTheme = useCallback((newTheme: 'light' | 'dark') => {
+    setThemeState(newTheme);
+    localStorage.setItem('resqtech_theme', newTheme);
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setThemeState(prev => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      localStorage.setItem('resqtech_theme', next);
+      return next;
+    });
+  }, []);
+
+  // Synchronize document theme classes on mount & update
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.body.classList.remove('theme-paper-white');
+      document.body.classList.add('theme-dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('theme-dark');
+      document.body.classList.add('theme-paper-white');
+    }
+  }, [theme]);
+
+  // User GPS coordinates for distance calculation (default: central disaster node)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number }>(() => ({
+    lat: country === 'NPL' ? 27.7172 : 23.0338,
+    lng: country === 'NPL' ? 85.3240 : 72.5850
+  }));
+
+  // Radius filter for main dashboard (Default: strictly within 15 km)
+  const [onlyNearby15Km, setOnlyNearby15Km] = useState<boolean>(true);
+  const [isLocating, setIsLocating] = useState<boolean>(false);
 
   // Data collections with local caching fallback
   const [shelters, setShelters] = useState<Shelter[]>(() => {
@@ -306,6 +366,87 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setResourceRequests(prev =>
       prev.map(r => (r.id === reqId ? { ...r, status } : r))
     );
+  }, []);
+
+  const registerShelter = useCallback((data: Partial<Shelter> & { name: string; type: ShelterType; city: string; state: string; totalCapacity: number; country: Country }): Shelter => {
+    const isPriv = data.isPrivate ?? (data.ownership === 'Private' || data.type.startsWith('Private'));
+    const ownership = data.ownership || (isPriv ? 'Private' : 'Public / Government');
+    const id = data.id || `SH-${data.country}-${data.city.slice(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X')}-${Date.now().toString().slice(-4)}`;
+    const cap = Math.max(10, data.totalCapacity || 100);
+
+    const newShelter: Shelter = {
+      id,
+      name: data.name,
+      type: data.type,
+      address: data.address || `${data.city}, ${data.state}`,
+      country: data.country,
+      state: data.state,
+      district: data.district || data.city,
+      city: data.city,
+      lat: data.lat || 23.0225 + (Math.random() - 0.5) * 0.08,
+      lng: data.lng || 72.5714 + (Math.random() - 0.5) * 0.08,
+      totalCapacity: cap,
+      currentOccupancy: 0,
+      availableBeds: data.availableBeds ?? cap,
+      managerName: data.managerName || 'Shelter Officer',
+      managerRole: data.managerRole || (isPriv ? 'Facility Keyholder / Host' : 'Relief Camp Incharge'),
+      managingOrg: data.managingOrg || (isPriv ? 'Private Relief Partner' : 'District Disaster Management Authority'),
+      phone: data.phone || '+91 98765 00000',
+      email: data.email || 'shelter@resqtech.org',
+      emergencyCoordinator: data.emergencyCoordinator || 'NDRF / Local Thana Coordinator',
+      status: 'AVAILABLE',
+      ownership,
+      isPrivate: isPriv,
+      lastUpdated: 'Just now',
+      verification: data.verification || {
+        aadhaarId: `XXXX-XXXX-${Math.floor(1000 + Math.random() * 9000)}`,
+        aadhaarHolderName: data.managerName || 'Shelter Authority',
+        policeStation: `${data.city} Central Station`,
+        policeVerificationId: `POL-${data.country}-${Math.floor(10000 + Math.random() * 90000)}`,
+        policeStationPhone: '+91 11 2345 6789',
+        verificationDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        verifiedByOfficer: 'SHO Inspector Incharge',
+        isVerified: true,
+        clearanceStatus: 'VERIFIED_ACTIVE'
+      },
+      facilities: data.facilities || {
+        medicalSupport: false,
+        foodAvailable: true,
+        drinkingWater: true,
+        beds: true,
+        toilets: Math.max(4, Math.round(cap / 20)),
+        powerBackup: true,
+        wheelchairAccessible: true,
+        childFriendly: true,
+        womenSafeSpace: true,
+        petFriendly: false
+      },
+      resources: data.resources || {
+        beds: { available: cap, required: 0, unit: 'Beds' },
+        foodRations: { available: Math.round(cap * 3), required: 0, unit: 'Meals/day' },
+        drinkingWater: { available: Math.round(cap * 15), required: 0, unit: 'Liters/day' },
+        medicalKits: { available: Math.max(5, Math.round(cap / 20)), required: 0, unit: 'Kits' },
+        blankets: { available: cap, required: 0, unit: 'Units' },
+        hygieneKits: { available: Math.round(cap * 0.8), required: 0, unit: 'Packs' }
+      }
+    };
+
+    setShelters(prev => [newShelter, ...prev]);
+    setSelectedShelterId(newShelter.id);
+
+    setNotifications(prev => [
+      {
+        id: `notif-${Date.now()}`,
+        title: `Shelter Registered (${ownership})`,
+        desc: `${newShelter.name} in ${newShelter.city} has been added to the RESQTECH safe zones directory.`,
+        type: 'success',
+        time: 'Just now',
+        read: false
+      },
+      ...prev
+    ]);
+
+    return newShelter;
   }, []);
 
   const registerFamily = useCallback((familyData: Omit<Family, 'id' | 'registeredAt'>) => {
@@ -591,6 +732,55 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setNotifications([]);
   };
 
+  const locateUserAndFilterNearby = useCallback((onSuccess?: (coords: { lat: number; lng: number }, nearest: Shelter, distKm: number) => void) => {
+    setIsLocating(true);
+
+    const applyLocation = (lat: number, lng: number) => {
+      setUserLocation({ lat, lng });
+      setOnlyNearby15Km(true);
+      setCurrentTab('shelters');
+      setSearchQuery('');
+      setIsLocating(false);
+
+      // Find nearest shelter
+      const activeShelters = shelters.filter(s => country === 'ALL' || s.country === country);
+      if (activeShelters.length > 0) {
+        let nearest = activeShelters[0];
+        let minDist = calculateDistanceKm(lat, lng, nearest.lat, nearest.lng);
+        for (let i = 1; i < activeShelters.length; i++) {
+          const d = calculateDistanceKm(lat, lng, activeShelters[i].lat, activeShelters[i].lng);
+          if (d < minDist) {
+            minDist = d;
+            nearest = activeShelters[i];
+          }
+        }
+        setSelectedShelterId(nearest.id);
+        if (onSuccess) {
+          onSuccess({ lat, lng }, nearest, minDist);
+        }
+      }
+    };
+
+    if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          applyLocation(pos.coords.latitude, pos.coords.longitude);
+        },
+        () => {
+          // Fallback to primary disaster node if permission denied or timeout
+          const fallbackLat = country === 'NPL' ? 27.7172 : 23.0338;
+          const fallbackLng = country === 'NPL' ? 85.3240 : 72.5850;
+          applyLocation(fallbackLat, fallbackLng);
+        },
+        { timeout: 4000, maximumAge: 30000 }
+      );
+    } else {
+      const fallbackLat = country === 'NPL' ? 27.7172 : 23.0338;
+      const fallbackLng = country === 'NPL' ? 85.3240 : 72.5850;
+      applyLocation(fallbackLat, fallbackLng);
+    }
+  }, [shelters, country]);
+
   const filteredShelters = useMemo(() => {
     return shelters.filter(s => {
       if (country !== 'ALL' && s.country !== country) return false;
@@ -638,6 +828,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         alerts,
         volunteerOps,
         currentIncident,
+        registerShelter,
         updateShelterOccupancy,
         setShelterOccupancy,
         updateShelterResource,
@@ -661,6 +852,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         unreadNotifCount,
         markNotifRead,
         clearAllNotifs,
+        theme,
+        setTheme,
+        toggleTheme,
+        userLocation,
+        setUserLocation,
+        onlyNearby15Km,
+        setOnlyNearby15Km,
+        locateUserAndFilterNearby,
+        isLocating,
         resetDemoData
       }}
     >

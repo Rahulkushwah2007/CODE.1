@@ -8,6 +8,8 @@ export type UserRole =
   | 'district_admin' 
   | 'super_admin';
 
+export type ShelterOwnership = 'Public / Government' | 'Private';
+
 export type ShelterType = 
   | 'Government Relief Camp' 
   | 'School' 
@@ -17,7 +19,10 @@ export type ShelterType =
   | 'NGO shelter' 
   | 'Temporary camp' 
   | 'Emergency evacuation center' 
-  | 'Religious / Community Facility';
+  | 'Religious / Community Facility'
+  | 'Private Hotel / Resort'
+  | 'Private Marriage Hall / Banquet'
+  | 'Private Residential / Corporate Facility';
 
 export type ShelterStatus = 'AVAILABLE' | 'LIMITED' | 'CRITICAL' | 'FULL';
 
@@ -49,6 +54,18 @@ export interface ShelterResources {
   hygieneKits: ResourceDetail;
 }
 
+export interface ShelterVerification {
+  aadhaarId: string;
+  aadhaarHolderName: string;
+  policeStation: string;
+  policeVerificationId: string;
+  policeStationPhone: string;
+  verificationDate: string;
+  verifiedByOfficer: string;
+  isVerified: boolean;
+  clearanceStatus?: 'VERIFIED_ACTIVE' | 'AUDIT_PASSED';
+}
+
 export interface Shelter {
   id: string;
   name: string;
@@ -72,7 +89,10 @@ export interface Shelter {
   facilities: ShelterFacilities;
   resources: ShelterResources;
   status: ShelterStatus;
+  ownership?: ShelterOwnership;
+  isPrivate?: boolean;
   lastUpdated: string;
+  verification?: ShelterVerification;
 }
 
 export interface FamilyMember {

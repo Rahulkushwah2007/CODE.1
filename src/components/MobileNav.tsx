@@ -1,49 +1,86 @@
 import React from 'react';
 import { useApp, NavigationTab } from '../context/AppContext';
 import {
-  LayoutDashboard,
-  Compass,
-  MapPin,
   Building2,
+  PackageCheck,
   AlertOctagon,
-  UserPlus,
-  Sliders
+  UserCheck
 } from 'lucide-react';
+import { triggerHaptic, handleRipple } from '../utils/feedback';
 
 export const MobileNav: React.FC = () => {
   const { currentTab, setCurrentTab, alerts } = useApp();
   const activeAlerts = alerts.filter(a => a.status === 'active' && a.severity === 'CRITICAL').length;
 
   const items = [
-    { tab: 'map' as NavigationTab, label: 'Map', icon: MapPin },
-    { tab: 'finder' as NavigationTab, label: 'Find Shelter', icon: Compass },
-    { tab: 'intake' as NavigationTab, label: 'Intake', icon: UserPlus },
-    { tab: 'command' as NavigationTab, label: 'Command', icon: LayoutDashboard },
-    { tab: 'alerts' as NavigationTab, label: 'Alerts', icon: AlertOctagon, badge: activeAlerts > 0 ? activeAlerts : undefined }
+    {
+      tab: 'shelters' as NavigationTab,
+      label: 'Shelters',
+      icon: Building2
+    },
+    {
+      tab: 'resources' as NavigationTab,
+      label: 'Resources',
+      icon: PackageCheck
+    },
+    {
+      tab: 'alerts' as NavigationTab,
+      label: 'Alerts',
+      icon: AlertOctagon,
+      badge: activeAlerts > 0 ? activeAlerts : undefined
+    },
+    {
+      tab: 'profile' as NavigationTab,
+      label: 'Profile',
+      icon: UserCheck
+    }
   ];
 
+  const handleNav = (e: React.MouseEvent<HTMLButtonElement>, tab: NavigationTab) => {
+    handleRipple(e);
+    triggerHaptic(20);
+    setCurrentTab(tab);
+  };
+
   return (
-    <nav id="mobile-bottom-nav" className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0A1120]/98 backdrop-blur-md border-t border-[#243656] text-[#94A3B8] py-1.5 px-2">
-      <div className="flex items-center justify-around max-w-md mx-auto">
+    <nav
+      id="mobile-bottom-nav"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0F172A] border-t-2 border-[#1E293B] text-[#F8FAFC] pb-safe shadow-2xl"
+    >
+      <div className="grid grid-cols-4 items-center max-w-md mx-auto py-1 px-1">
         {items.map(item => {
-          const isActive = currentTab === item.tab;
+          const isActive =
+            currentTab === item.tab ||
+            (item.tab === 'shelters' && (currentTab === 'map' || currentTab === 'finder'));
           const Icon = item.icon;
+
           return (
             <button
               key={item.tab}
-              id={`mobile-nav-${item.tab}`}
-              onClick={() => setCurrentTab(item.tab)}
-              className={`relative flex flex-col items-center py-1 px-2.5 rounded-lg transition-colors cursor-pointer ${
-                isActive ? 'text-blue-400 font-bold' : 'hover:text-[#F8FAFC]'
+              id={`mobile-nav-btn-${item.tab}`}
+              onClick={e => handleNav(e, item.tab)}
+              className={`relative flex flex-col items-center justify-center min-h-[52px] py-1 px-1 rounded-xl transition-all cursor-pointer ripple-container ${
+                isActive
+                  ? 'text-[#EA580C] font-black bg-[#1E293B] border border-[#EA580C]/40'
+                  : 'text-[#94A3B8] hover:text-[#FFFFFF]'
               }`}
+              aria-label={item.label}
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'text-blue-400' : 'text-[#94A3B8]'}`} />
-              <span className="text-[10px] mt-0.5">{item.label}</span>
-              {item.badge && (
-                <span className="absolute -top-0.5 right-1.5 w-3.5 h-3.5 bg-rose-600 text-white rounded-full text-[9px] font-bold flex items-center justify-center">
-                  {item.badge}
-                </span>
-              )}
+              <div className="relative">
+                <Icon
+                  className={`w-5 h-5 transition-transform ${
+                    isActive ? 'text-[#EA580C] scale-110' : 'text-[#94A3B8]'
+                  }`}
+                />
+                {item.badge && (
+                  <span className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 bg-[#DC2626] text-[#FFFFFF] rounded-full text-[9px] font-mono font-bold flex items-center justify-center shadow-md">
+                    {item.badge}
+                  </span>
+                )}
+              </div>
+              <span className={`text-[11px] mt-1 tracking-tight font-medium ${isActive ? 'text-[#EA580C] font-black' : 'text-[#94A3B8]'}`}>
+                {item.label}
+              </span>
             </button>
           );
         })}

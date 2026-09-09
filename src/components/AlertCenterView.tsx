@@ -155,6 +155,39 @@ export const AlertCenterView: React.FC = () => {
         )}
       </div>
 
+      {/* Accordion for Secondary Early Warning Protocols */}
+      <div className="pt-6 border-t border-white/10 space-y-3">
+        <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
+          Emergency Warning Standards &amp; Siren Protocols
+        </h3>
+
+        <div className="bg-[#111C30] border border-white/10 rounded-2xl overflow-hidden">
+          <details className="group">
+            <summary className="p-4 text-xs font-bold text-white hover:bg-[#182742] transition-colors cursor-pointer list-none flex items-center justify-between">
+              <span>What do the Red, Amber, and Yellow bulletin levels signify?</span>
+              <span className="text-slate-400 group-open:rotate-180 transition-transform text-sm">▼</span>
+            </summary>
+            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-white/5 leading-relaxed">
+              <strong>RED (Critical):</strong> Immediate life-threat. Evacuate to highest elevation shelter within 30 minutes.<br />
+              <strong>AMBER (High):</strong> Severe weather or flash flood warning within 6-12 hours. Prepare Go-Bag and vulnerable family members.<br />
+              <strong>YELLOW (Medium):</strong> Watch advisory. Monitor Resqtech telemetry and radio broadcasts for updates.
+            </div>
+          </details>
+        </div>
+
+        <div className="bg-[#111C30] border border-white/10 rounded-2xl overflow-hidden">
+          <details className="group">
+            <summary className="p-4 text-xs font-bold text-white hover:bg-[#182742] transition-colors cursor-pointer list-none flex items-center justify-between">
+              <span>How are false alarms or rumors filtered during disasters?</span>
+              <span className="text-slate-400 group-open:rotate-180 transition-transform text-sm">▼</span>
+            </summary>
+            <div className="px-4 pb-4 pt-1 text-xs text-slate-300 border-t border-white/5 leading-relaxed">
+              All alerts displayed in Resqtech are cryptographically signed by official State Disaster Management Authorities (SDMA / NDRF in India, NDMA in Nepal) before propagating to client devices.
+            </div>
+          </details>
+        </div>
+      </div>
+
     </div>
   );
 };
