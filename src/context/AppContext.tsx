@@ -129,10 +129,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [offlineMode, setOfflineMode] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState('10:46 AM (Live)');
 
-  // Theme state: default to 'light' (Paper White theme)
+  // Theme state: default to 'dark' (Ultra-dark tactical navy theme)
   const [theme, setThemeState] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('resqtech_theme');
-    return saved === 'dark' ? 'dark' : 'light';
+    return saved === 'light' ? 'light' : 'dark';
   });
 
   const setTheme = useCallback((newTheme: 'light' | 'dark') => {

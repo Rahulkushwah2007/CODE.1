@@ -17,7 +17,7 @@ export interface GeocodedLocation {
 // In-memory cache to avoid duplicate network queries
 const geocodeCache = new Map<string, GeocodedLocation[]>();
 
-export async function searchLocations(query: string, apiKey?: string): Promise<GeocodedLocation[]> {
+export async function searchLocations(query: string, apiKey: string = ((import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY || '')): Promise<GeocodedLocation[]> {
   const trimmed = query.trim();
   if (!trimmed || trimmed.length < 2) return [];
 

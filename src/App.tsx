@@ -99,7 +99,7 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0B1120] text-[#0F172A] dark:text-[#F8FAFC] flex flex-col selection:bg-[#EA580C] selection:text-white transition-colors">
+    <div className="min-h-screen bg-[#0B1329] text-[#FFFFFF] flex flex-col selection:bg-[#EA580C] selection:text-white transition-colors">
       
       {/* Floating Glassmorphic Top App Bar */}
       <Navbar onOpenShelterDetails={handleOpenGlobalSheet} />

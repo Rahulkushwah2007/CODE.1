@@ -421,17 +421,17 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                   const isFull = shelter.status === 'FULL' || shelter.availableBeds <= 0;
 
                   return (
-                    /* Cards: Pure #FFFFFF cards in light mode with explicit #E2E8F0 border */
+                    /* Cards: Deep slate navy #1E293B in dark mode with #334155 dark border accents */
                     <div
                       key={shelter.id}
-                      className="bg-[#FFFFFF] dark:bg-[#0F172A] border-2 border-[#E2E8F0] dark:border-slate-800 hover:border-[#0F172A]/40 dark:hover:border-slate-600 rounded-3xl p-5 shadow-md flex flex-col justify-between transition-all group relative"
+                      className="bg-[#FFFFFF] dark:bg-[#1E293B] border-2 border-[#E2E8F0] dark:border-[#334155] hover:border-[#F97316]/50 dark:hover:border-[#F97316]/60 rounded-3xl p-5 shadow-md flex flex-col justify-between transition-all group relative"
                     >
                       <div className="space-y-3">
                         {/* Header with Type & Compulsory Status Badges */}
-                        <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-[#E2E8F0] dark:border-slate-800">
+                        <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-[#E2E8F0] dark:border-[#334155]">
                           <div className="space-y-1">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-[10px] font-mono text-[#475569] dark:text-slate-400 uppercase font-bold tracking-wider block">
+                              <span className="text-[10px] font-mono text-[#475569] dark:text-[#64748B] uppercase font-bold tracking-wider block">
                                 {shelter.type}
                               </span>
                               <span
@@ -444,10 +444,10 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                                 {shelter.ownership || (shelter.isPrivate ? 'Private' : 'Public')}
                               </span>
                             </div>
-                            <h3 className="font-black text-[#0F172A] dark:text-white text-base leading-snug group-hover:text-[#EA580C] transition-colors">
+                            <h3 className="font-black text-[#0F172A] dark:text-[#FFFFFF] text-base leading-snug group-hover:text-[#F97316] transition-colors">
                               {shelter.name}
                             </h3>
-                            <p className="text-xs text-[#475569] dark:text-slate-400 flex items-center gap-1 font-medium">
+                            <p className="text-xs text-[#475569] dark:text-[#CBD5E1] flex items-center gap-1 font-medium">
                               <MapPin className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
                               <span>{shelter.city}, {shelter.district || shelter.state}</span>
                             </p>
@@ -457,34 +457,34 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                             <span
                               className={`px-2.5 py-1 rounded-full font-mono font-bold text-[10px] uppercase block tracking-wider ${
                                 isFull
-                                  ? 'bg-[#DC2626] text-[#FFFFFF]'
-                                  : 'bg-[#059669] text-[#FFFFFF]'
+                                  ? 'bg-[#EF4444] text-[#FFFFFF]'
+                                  : 'bg-[#10B981] text-[#FFFFFF]'
                               }`}
                             >
                               {isFull
                                 ? 'AT CAPACITY'
                                 : `${shelter.availableBeds} BEDS LEFT / ${shelter.totalCapacity} TOTAL`}
                             </span>
-                            <span className="text-[11px] font-mono font-bold text-[#EA580C] dark:text-amber-400 block mt-1">
+                            <span className="text-[11px] font-mono font-bold text-[#F97316] block mt-1">
                               {distanceKm} km away
                             </span>
                           </div>
                         </div>
 
                         {/* Live Capacity Bar */}
-                        <div className="space-y-1.5 bg-[#F8FAFC] dark:bg-[#1E293B] p-3 rounded-2xl border border-[#E2E8F0] dark:border-slate-700">
+                        <div className="space-y-1.5 bg-[#F8FAFC] dark:bg-[#0B1329] p-3 rounded-2xl border border-[#E2E8F0] dark:border-[#334155]">
                           <div className="flex items-center justify-between text-xs font-mono">
-                            <span className="text-[#475569] dark:text-slate-400 font-medium">
+                            <span className="text-[#475569] dark:text-[#CBD5E1] font-medium">
                               Occupancy ({occPct}%)
                             </span>
-                            <span className={`font-bold ${isFull ? 'text-[#DC2626]' : 'text-[#059669]'}`}>
+                            <span className={`font-bold ${isFull ? 'text-[#EF4444]' : 'text-[#10B981]'}`}>
                               {shelter.availableBeds} Vacant Beds
                             </span>
                           </div>
-                          <div className="w-full h-2 bg-[#E2E8F0] dark:bg-slate-700 rounded-full overflow-hidden">
+                          <div className="w-full h-2 bg-[#E2E8F0] dark:bg-[#334155] rounded-full overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all duration-300 ${
-                                isFull ? 'bg-[#DC2626]' : 'bg-[#059669]'
+                                isFull ? 'bg-[#EF4444]' : 'bg-[#10B981]'
                               }`}
                               style={{ width: `${Math.min(100, occPct)}%` }}
                             />
@@ -492,41 +492,41 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                         </div>
 
                         {/* Facility Chips */}
-                        <div className="flex flex-wrap gap-1.5 text-[10px] font-mono text-[#0F172A] dark:text-slate-200">
+                        <div className="flex flex-wrap gap-1.5 text-[10px] font-mono text-[#0F172A] dark:text-[#CBD5E1]">
                           {shelter.facilities.medicalSupport && (
-                            <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 text-[#0F172A] dark:text-slate-200 flex items-center gap-1 font-semibold">
-                              <HeartPulse className="w-3 h-3 text-[#DC2626]" /> Medical
+                            <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#0B1329] border border-[#E2E8F0] dark:border-[#334155] text-[#0F172A] dark:text-[#CBD5E1] flex items-center gap-1 font-semibold">
+                              <HeartPulse className="w-3 h-3 text-[#EF4444]" /> Medical
                             </span>
                           )}
                           {shelter.facilities.drinkingWater && (
-                            <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 text-[#0F172A] dark:text-slate-200 flex items-center gap-1 font-semibold">
-                              <Droplet className="w-3 h-3 text-[#059669]" /> Water
+                            <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#0B1329] border border-[#E2E8F0] dark:border-[#334155] text-[#0F172A] dark:text-[#CBD5E1] flex items-center gap-1 font-semibold">
+                              <Droplet className="w-3 h-3 text-[#10B981]" /> Water
                             </span>
                           )}
                           {shelter.facilities.foodAvailable && (
-                            <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 text-[#0F172A] dark:text-slate-200 flex items-center gap-1 font-semibold">
+                            <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#0B1329] border border-[#E2E8F0] dark:border-[#334155] text-[#0F172A] dark:text-[#CBD5E1] flex items-center gap-1 font-semibold">
                               <Utensils className="w-3 h-3 text-[#EA580C]" /> Hot Food
                             </span>
                           )}
                           {shelter.facilities.wheelchairAccessible && (
-                            <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 text-[#0F172A] dark:text-slate-200 flex items-center gap-1 font-semibold">
+                            <span className="px-2 py-0.5 rounded-lg bg-[#F8FAFC] dark:bg-[#0B1329] border border-[#E2E8F0] dark:border-[#334155] text-[#0F172A] dark:text-[#CBD5E1] flex items-center gap-1 font-semibold">
                               Wheelchair
                             </span>
                           )}
                         </div>
 
-                        {/* Aadhaar ID & Police Verification (Hidden by default with option to check it - User Request #7) */}
+                        {/* Aadhaar ID & Police Verification */}
                         <div className="pt-1">
                           <ShelterVerificationBadge shelter={shelter} />
                         </div>
                       </div>
 
                       {/* Actions Row */}
-                      <div className="grid grid-cols-3 gap-2 pt-4 mt-3 border-t border-[#E2E8F0] dark:border-slate-800">
+                      <div className="grid grid-cols-3 gap-2 pt-4 mt-3 border-t border-[#E2E8F0] dark:border-[#334155]">
                         {/* Call Hotline */}
                         <a
                           href={`tel:${shelter.contactPhone || '112'}`}
-                          className="py-2.5 px-2 rounded-xl bg-[#0F172A] dark:bg-slate-800 hover:bg-[#1E293B] dark:hover:bg-slate-700 text-[#FFFFFF] text-xs font-bold transition-colors flex items-center justify-center gap-1 shadow-sm text-center"
+                          className="py-2.5 px-2 rounded-xl bg-[#0F172A] dark:bg-[#0B1329] hover:bg-[#1E293B] dark:hover:bg-[#1E293B] border border-transparent dark:border-[#334155] text-[#FFFFFF] text-xs font-bold transition-colors flex items-center justify-center gap-1 shadow-sm text-center"
                           title="Call Shelter Emergency Contact"
                         >
                           <Phone className="w-3.5 h-3.5 text-[#FFFFFF] shrink-0" />
@@ -536,24 +536,24 @@ export const SheltersRosterView: React.FC<SheltersRosterViewProps> = ({ onOpenSO
                         {/* Directions */}
                         <button
                           onClick={() => handleOpenSheet(shelter)}
-                          className="py-2.5 px-2 rounded-xl bg-[#FFFFFF] dark:bg-[#1E293B] hover:bg-slate-50 dark:hover:bg-slate-800 border-2 border-[#E2E8F0] dark:border-slate-700 text-[#0F172A] dark:text-white text-xs font-bold transition-colors flex items-center justify-center gap-1 text-center cursor-pointer"
+                          className="py-2.5 px-2 rounded-xl bg-[#FFFFFF] dark:bg-[#0B1329] hover:bg-slate-50 dark:hover:bg-[#1E293B] border-2 border-[#E2E8F0] dark:border-[#334155] text-[#0F172A] dark:text-white text-xs font-bold transition-colors flex items-center justify-center gap-1 text-center cursor-pointer"
                           title="View Directions & Shelter Details"
                         >
                           <Navigation className="w-3.5 h-3.5 text-[#0F172A] dark:text-white shrink-0" />
                           <span className="truncate">Directions</span>
                         </button>
 
-                        {/* Book Spot */}
+                        {/* Book Centre in Advance CTA */}
                         <button
                           onClick={() => handleOpenBooking(shelter)}
                           disabled={isFull}
-                          className={`py-2.5 px-2 rounded-xl text-[#FFFFFF] text-xs font-black transition-all shadow-sm text-center cursor-pointer ripple-container ${
+                          className={`py-2.5 px-2 rounded-xl text-[#FFFFFF] text-xs font-bold transition-all shadow-sm text-center cursor-pointer ripple-container ${
                             isFull
-                              ? 'bg-slate-400 opacity-60 cursor-not-allowed'
-                              : 'clay-btn-signal bg-[#EA580C] hover:bg-[#C2410C]'
+                              ? 'bg-slate-700 opacity-60 cursor-not-allowed'
+                              : 'bg-[#10B981] hover:bg-[#059669] shadow-md shadow-[#10B981]/25 border border-emerald-400/30'
                           }`}
                         >
-                          {isFull ? 'Full' : 'Book Spot'}
+                          {isFull ? 'Full' : 'Book Centre in Advance'}
                         </button>
                       </div>
                     </div>
